@@ -3,71 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 Master Omni-Sport Analytics Engine</title>
+    <title>Master Sport Analytics Tool</title>
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/darkly/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-    
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-      
-      // TODO: Replace with your Firebase Project Keys
-      const firebaseConfig = {
-        databaseURL: "https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com"
-      };
-      
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      
-      window.cloudSaveToBoard = function(mode, sport, name, pos, p1, p2, score) {
-        const newPlayerRef = push(ref(db, `boards/${mode}/${sport}`));
-        set(newPlayerRef, { name, pos, p1, p2, score, timestamp: new Date().toISOString() });
-      };
-
-      window.cloudLogLive = function(mode, sport, homeScore, awayScore, action, type, playCount) {
-        set(ref(db, `live_games/${mode}/${sport}`), {
-          homeScore, awayScore, lastAction: action, lastType: type, totalPlays: playCount, lastUpdated: new Date().toISOString()
-        });
-      };
-    </script>
-
     <style>
         body { padding: 20px; background-color: #121212; }
         .card { margin-bottom: 20px; border-color: #333; background-color: #1e1e1e; }
+        
+        /* Master Mode Toggles */
         .mode-tabs .nav-link { font-size: 1.3rem; font-weight: bold; padding: 15px 40px; border-radius: 10px 10px 0 0; color: #888; border: 2px solid transparent; border-bottom: none; }
         .mode-tabs .nav-link.pro-mode.active { background-color: #ffd700; color: #000; border-color: #ffd700; }
         .mode-tabs .nav-link.d1-mode.active { background-color: #0dcaf0; color: #000; border-color: #0dcaf0; }
+
+        /* Sport Nav Pills */
         .nav-pills .nav-link { color: #aaa; font-weight: bold; border-radius: 0; padding: 12px 20px; font-size: 1rem; }
         .nav-pills .nav-link.bsb.active { background-color: #198754; color: white; border-bottom: 3px solid #fff;}
         .nav-pills .nav-link.bkb.active { background-color: #fd7e14; color: white; border-bottom: 3px solid #fff;}
         .nav-pills .nav-link.cfb.active { background-color: #0d6efd; color: white; border-bottom: 3px solid #fff;}
         .nav-pills .nav-link.ihk.active { background-color: #e83e8c; color: white; border-bottom: 3px solid #fff;}
         .nav-pills .nav-link.soc.active { background-color: #6f42c1; color: white; border-bottom: 3px solid #fff;}
+        
+        /* Sub Tabs */
         .sub-tabs .nav-link { color: #aaa; font-size: 0.85rem; padding: 8px 12px; font-weight: bold; }
         .sub-tabs .nav-link.active { background-color: #2b2b2b !important; border-color: #444 #444 #2b2b2b !important; color: white !important;}
+        
         .section-header { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; border-bottom: 1px solid #444; margin: 15px 0 10px 0; padding-bottom: 5px;}
         .slider-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; }
         .table-dark { background-color: #1e1e1e; font-size: 0.85rem;}
         .btn-live-action { font-weight: bold; padding: 8px; font-size: 0.85rem; }
+
+        /* Matchup Probability Bar */
         .matchup-bar-wrapper { width: 100%; height: 40px; background-color: #dc3545; border-radius: 8px; overflow: hidden; position: relative; display: flex; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .matchup-bar-fill { height: 100%; transition: width 0.4s ease-in-out; }
         .matchup-text-left { position: absolute; left: 15px; line-height: 40px; color: white; font-weight: bold; font-size: 1.1rem; text-shadow: 1px 1px 3px black; z-index: 2;}
         .matchup-text-right { position: absolute; right: 15px; line-height: 40px; color: white; font-weight: bold; font-size: 1.1rem; text-shadow: 1px 1px 3px black; z-index: 2;}
         .matchup-center-line { position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background-color: rgba(255,255,255,0.5); z-index: 1; }
-        @media print { .btn, .dropdown-menu { display: none !important; } .nav-tabs, .nav-pills { display: none !important; } .card { break-inside: avoid; border: 1px solid #555 !important; } body { background-color: #121212 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+
+        /* Basic Print Styles */
+        @media print {
+            .btn, .dropdown-menu { display: none !important; }
+            .nav-tabs, .nav-pills { display: none !important; }
+            .card { break-inside: avoid; border: 1px solid #555 !important; }
+            body { background-color: #121212 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container-fluid" id="app-container" style="max-width: 1500px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-light m-0">🌐 Master Omni-Sport Engine <span class="text-muted fs-5">(2026 Edition)</span></h2>
+        <h2 class="fw-bold text-light m-0">🌐 Master Sport Analytics Tool <span class="text-muted fs-5">(2026 Edition)</span></h2>
         <div class="d-flex gap-2">
             <div class="btn-group">
-                <button type="button" class="btn btn-outline-info dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">📤 Export / Share</button>
+                <button type="button" class="btn btn-outline-info dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
+                    📤 Export / Share
+                </button>
                 <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary">
                     <li><a class="dropdown-item text-light" href="#" onclick="shareLink()">🔗 Copy Public Link</a></li>
                     <li><a class="dropdown-item text-light" href="#" onclick="savePDF()">📄 Download PDF Report</a></li>
@@ -89,6 +82,7 @@
     </ul>
 
     <div class="tab-content border border-secondary p-3 rounded-bottom" style="background-color: #1a1a1a;">
+        
         <div class="tab-pane fade show active" id="mode-pro">
             <ul class="nav nav-pills justify-content-center mb-4 border-bottom border-secondary" role="tablist">
                 <li class="nav-item"><button class="nav-link bsb active" data-bs-toggle="tab" data-bs-target="#pro_bsb_main">⚾ MLB Draft</button></li>
@@ -99,6 +93,7 @@
             </ul>
             <div class="tab-content" id="pro_content_area"></div>
         </div>
+
         <div class="tab-pane fade" id="mode-d1">
             <ul class="nav nav-pills justify-content-center mb-4 border-bottom border-secondary" role="tablist">
                 <li class="nav-item"><button class="nav-link bsb active" data-bs-toggle="tab" data-bs-target="#d1_bsb_main">⚾ College Baseball</button></li>
@@ -109,18 +104,60 @@
             </ul>
             <div class="tab-content" id="d1_content_area"></div>
         </div>
+
     </div>
 </div>
 
 <script>
+// =========================================================================
+// 1. THE OMNI-CONFIGURATION ENGINE (Dynamic Tournaments & Multi-Level)
+// =========================================================================
 const SPORTS_CONFIG = {
-    'bsb': { title: 'Baseball', color: '#198754', p1_label: 'Max EV', p1_unit: ' mph', p2_label: 'Contact (K%)', p2_unit: '%', p1_min: 85, p1_max: 120, p1_step: 1, p2_min: 5, p2_max: 40, p2_step: 1, pos: ['Premium (C/SS/CF)', 'Corner (1B/3B/OF)'], api: 'baseball/college-baseball', actions: [{name:'Ball', pts:0, type:'neutral'}, {name:'Strike', pts:0, type:'fail'}, {name:'Hit', pts:0, type:'success'}, {name:'Out', pts:0, type:'fail'}, {name:'Home Run', pts:1, type:'success'}], t_off: 'Runs/9', t_def: 'ERA', k_factor: 3.5, pro: { target_p1: 115, target_p2: 20, weight_p1: 0.6, levels: ['College', 'Prep', 'International'], tourneys: ['World Series', 'World Baseball Classic'] }, d1:  { target_p1: 105, target_p2: 25, weight_p1: 0.6, levels: ['D1 Power', 'Mid-Major', 'D2/D3', 'JUCO'], tourneys: ['College World Series', 'SEC Tournament'] } },
-    'bkb': { title: 'Basketball', color: '#fd7e14', p1_label: 'True Shooting (TS%)', p1_unit: '%', p2_label: 'Shooting (3PT%)', p2_unit: '%', p1_min: 40, p1_max: 75, p1_step: 0.5, p2_min: 20, p2_max: 50, p2_step: 0.5, pos: ['Guard', 'Wing', 'Big'], api: 'basketball/mens-college-basketball', actions: [{name:'Make 2PT', pts:2, type:'success'}, {name:'Make 3PT', pts:3, type:'success'}, {name:'Miss', pts:0, type:'fail'}, {name:'Assist', pts:0, type:'neutral'}, {name:'Turnover', pts:0, type:'fail'}], t_off: 'Pts/100', t_def: 'Pts/100 Allowed', k_factor: 11.5, pro: { target_p1: 65, target_p2: 45, weight_p1: 0.6, levels: ['College', 'International', 'Prep'], tourneys: ['NBA Playoffs', 'FIBA World Cup'] }, d1:  { target_p1: 60, target_p2: 38, weight_p1: 0.6, levels: ['D1 Power', 'Mid-Major', 'D2/D3', 'JUCO'], tourneys: ['March Madness', 'NIT'] } },
-    'cfb': { title: 'Football', color: '#0d6efd', p1_label: 'Speed (40-Yd)', p1_unit: 's', p2_label: 'Tape (Grade)', p2_unit: '', p1_min: 4.2, p1_max: 5.5, p1_step: 0.01, p2_min: 50, p2_max: 95, p2_step: 1, pos: ['Skill', 'Trenches'], api: 'football/college-football', actions: [{name:'TD', pts:6, type:'success'}, {name:'1st Down', pts:0, type:'success'}, {name:'Gain', pts:0, type:'neutral'}, {name:'Incomplete', pts:0, type:'fail'}, {name:'TFL/Sack', pts:0, type:'fail'}, {name:'Turnover', pts:0, type:'fail'}], t_off: 'Pts/Game', t_def: 'Pts Allowed/Game', k_factor: 15, pro: { target_p1: 4.30, target_p2: 95, weight_p1: 0.4, levels: ['College', 'FCS', 'D2/D3'], tourneys: ['NFL Playoffs / Super Bowl'] }, d1:  { target_p1: 4.45, target_p2: 85, weight_p1: 0.4, levels: ['FBS Power', 'Group of 5', 'FCS', 'D2/D3', 'JUCO'], tourneys: ['College Football Playoff (CFP)'] } },
-    'ihk': { title: 'Hockey', color: '#e83e8c', p1_label: 'Top Speed', p1_unit: ' mph', p2_label: 'Corsi For %', p2_unit: '%', p1_min: 18, p1_max: 25, p1_step: 0.1, p2_min: 40, p2_max: 70, p2_step: 0.5, pos: ['Forward', 'Defenseman'], api: 'hockey/nhl', actions: [{name:'Goal', pts:1, type:'success'}, {name:'Shot on Goal', pts:0, type:'success'}, {name:'Hit', pts:0, type:'neutral'}, {name:'Blocked Shot', pts:0, type:'neutral'}, {name:'Penalty', pts:0, type:'fail'}], t_off: 'Goals/Game', t_def: 'Goals Allowed', k_factor: 1.5, pro: { target_p1: 24, target_p2: 65, weight_p1: 0.5, levels: ['NCAA', 'CHL', 'International'], tourneys: ['Stanley Cup Playoffs', 'Olympics'] }, d1:  { target_p1: 23, target_p2: 60, weight_p1: 0.5, levels: ['NCAA D1', 'D3', 'Junior A', 'International'], tourneys: ['Frozen Four'] } },
-    'soc': { title: 'Soccer', color: '#6f42c1', p1_label: 'Top Speed', p1_unit: ' mph', p2_label: 'Pass Comp %', p2_unit: '%', p1_min: 18, p1_max: 24, p1_step: 0.1, p2_min: 50, p2_max: 95, p2_step: 0.5, pos: ['Forward', 'Midfielder', 'Defender'], api: 'soccer/usa.1', actions: [{name:'Goal', pts:1, type:'success'}, {name:'Shot on Tgt', pts:0, type:'success'}, {name:'Tackle', pts:0, type:'neutral'}, {name:'Turnover', pts:0, type:'fail'}, {name:'Foul', pts:0, type:'fail'}], t_off: 'xG/Game', t_def: 'xGA/Game', k_factor: 1.5, pro: { target_p1: 22.5, target_p2: 88, weight_p1: 0.5, levels: ['Top 5 Europe', 'MLS', 'Other Intl'], tourneys: ['FIFA World Cup', 'Champions League', 'UEFA Euro', 'Copa America'] }, d1:  { target_p1: 21.0, target_p2: 80, weight_p1: 0.5, levels: ['NCAA D1', 'D2/D3', 'JUCO', 'International'], tourneys: ['NCAA College Cup', 'CONCACAF U-20'] } }
+    'bsb': { 
+        title: 'Baseball', color: '#198754', p1_label: 'Max EV', p1_unit: ' mph', p2_label: 'Contact (K%)', p2_unit: '%',
+        p1_min: 85, p1_max: 120, p1_step: 1, p2_min: 5, p2_max: 40, p2_step: 1, pos: ['Premium (C/SS/CF)', 'Corner (1B/3B/OF)'], api: 'baseball/college-baseball',
+        actions: [{name:'Ball', pts:0, type:'neutral'}, {name:'Strike', pts:0, type:'fail'}, {name:'Hit', pts:0, type:'success'}, {name:'Out', pts:0, type:'fail'}, {name:'Home Run', pts:1, type:'success'}],
+        t_off: 'Runs/9', t_def: 'ERA', k_factor: 3.5, 
+        pro: { target_p1: 115, target_p2: 20, weight_p1: 0.6, levels: ['College', 'Prep', 'International'], tourneys: ['World Series', 'World Baseball Classic (WBC)'] },
+        d1:  { target_p1: 105, target_p2: 25, weight_p1: 0.6, levels: ['D1 Power', 'Mid-Major', 'D2/D3', 'JUCO'], tourneys: ['College World Series', 'SEC Tournament'] }
+    },
+    'bkb': { 
+        title: 'Basketball', color: '#fd7e14', p1_label: 'True Shooting (TS%)', p1_unit: '%', p2_label: 'Shooting (3PT%)', p2_unit: '%',
+        p1_min: 40, p1_max: 75, p1_step: 0.5, p2_min: 20, p2_max: 50, p2_step: 0.5, pos: ['Guard', 'Wing', 'Big'], api: 'basketball/mens-college-basketball',
+        actions: [{name:'Make 2PT', pts:2, type:'success'}, {name:'Make 3PT', pts:3, type:'success'}, {name:'Miss', pts:0, type:'fail'}, {name:'Assist', pts:0, type:'neutral'}, {name:'Turnover', pts:0, type:'fail'}],
+        t_off: 'Pts/100', t_def: 'Pts/100 Allowed', k_factor: 11.5, 
+        pro: { target_p1: 65, target_p2: 45, weight_p1: 0.6, levels: ['College', 'International', 'Prep'], tourneys: ['NBA Playoffs', 'FIBA World Cup', 'Olympics'] },
+        d1:  { target_p1: 60, target_p2: 38, weight_p1: 0.6, levels: ['D1 Power', 'Mid-Major', 'D2/D3', 'JUCO'], tourneys: ['March Madness', 'NIT Tournament'] }
+    },
+    'cfb': { 
+        title: 'Football', color: '#0d6efd', p1_label: 'Speed (40-Yd)', p1_unit: 's', p2_label: 'Tape (Grade)', p2_unit: '',
+        p1_min: 4.2, p1_max: 5.5, p1_step: 0.01, p2_min: 50, p2_max: 95, p2_step: 1, pos: ['Skill', 'Trenches'], api: 'football/college-football',
+        actions: [{name:'TD', pts:6, type:'success'}, {name:'1st Down', pts:0, type:'success'}, {name:'Gain', pts:0, type:'neutral'}, {name:'Incomplete', pts:0, type:'fail'}, {name:'TFL/Sack', pts:0, type:'fail'}, {name:'Turnover', pts:0, type:'fail'}],
+        t_off: 'Pts/Game', t_def: 'Pts Allowed/Game', k_factor: 15, 
+        pro: { target_p1: 4.30, target_p2: 95, weight_p1: 0.4, levels: ['College', 'FCS', 'D2/D3'], tourneys: ['NFL Playoffs / Super Bowl'] },
+        d1:  { target_p1: 4.45, target_p2: 85, weight_p1: 0.4, levels: ['FBS Power', 'Group of 5', 'FCS', 'D2/D3', 'JUCO'], tourneys: ['College Football Playoff (CFP)', 'SEC Championship'] }
+    },
+    'ihk': { 
+        title: 'Hockey', color: '#e83e8c', p1_label: 'Top Speed', p1_unit: ' mph', p2_label: 'Corsi For %', p2_unit: '%',
+        p1_min: 18, p1_max: 25, p1_step: 0.1, p2_min: 40, p2_max: 70, p2_step: 0.5, pos: ['Forward', 'Defenseman'], api: 'hockey/nhl',
+        actions: [{name:'Goal', pts:1, type:'success'}, {name:'Shot on Goal', pts:0, type:'success'}, {name:'Hit', pts:0, type:'neutral'}, {name:'Blocked Shot', pts:0, type:'neutral'}, {name:'Penalty', pts:0, type:'fail'}],
+        t_off: 'Goals/Game', t_def: 'Goals Allowed', k_factor: 1.5, 
+        pro: { target_p1: 24, target_p2: 65, weight_p1: 0.5, levels: ['NCAA', 'CHL', 'International'], tourneys: ['Stanley Cup Playoffs', 'Winter Olympics'] },
+        d1:  { target_p1: 23, target_p2: 60, weight_p1: 0.5, levels: ['NCAA D1', 'D3', 'Junior A', 'International'], tourneys: ['Frozen Four', 'Beanpot'] }
+    },
+    'soc': { 
+        title: 'Soccer', color: '#6f42c1', p1_label: 'Top Speed', p1_unit: ' mph', p2_label: 'Pass Comp %', p2_unit: '%',
+        p1_min: 18, p1_max: 24, p1_step: 0.1, p2_min: 50, p2_max: 95, p2_step: 0.5, pos: ['Forward', 'Midfielder', 'Defender'], api: 'soccer/usa.1',
+        actions: [{name:'Goal', pts:1, type:'success'}, {name:'Shot on Tgt', pts:0, type:'success'}, {name:'Tackle/INT', pts:0, type:'neutral'}, {name:'Turnover', pts:0, type:'fail'}, {name:'Foul', pts:0, type:'fail'}],
+        t_off: 'xG/Game', t_def: 'xGA/Game', k_factor: 1.5, 
+        pro: { target_p1: 22.5, target_p2: 88, weight_p1: 0.5, levels: ['Top 5 Europe', 'MLS', 'Other Intl'], tourneys: ['FIFA World Cup', 'UEFA Euro', 'Copa America', 'CONCACAF Gold Cup', 'Champions League'] },
+        d1:  { target_p1: 21.0, target_p2: 80, weight_p1: 0.5, levels: ['NCAA D1', 'D2/D3', 'JUCO', 'International'], tourneys: ['NCAA College Cup', 'CONCACAF U-20'] }
+    }
 };
 
+// =========================================================================
+// 2. HTML TEMPLATE GENERATOR
+// =========================================================================
 function generateHTML(mode, sport) {
     let s = SPORTS_CONFIG[sport]; let m = s[mode]; let prefix = `${mode}_${sport}`;
     let lvlOpts = m.levels.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -259,6 +296,7 @@ function generateHTML(mode, sport) {
     </div>`;
 }
 
+// Inject all 10 modules (2 Modes x 5 Sports)
 document.getElementById('pro_content_area').innerHTML = ['bsb','bkb','cfb','ihk','soc'].map(s => generateHTML('pro', s)).join('');
 document.getElementById('d1_content_area').innerHTML = ['bsb','bkb','cfb','ihk','soc'].map(s => generateHTML('d1', s)).join('');
 
@@ -272,90 +310,122 @@ const defaultData = {
             { id: 2, name: "Brady Ebel", school: "Prep HS", level: "Prep", pos: "Premium (C/SS/CF)", p1: 106, p2: 14 }, 
             { id: 3, name: "Trent Caraway", school: "Oregon St", level: "College", pos: "Premium (C/SS/CF)", p1: 111, p2: 18 },
             { id: 4, name: "Leo De Vries", school: "DR Academy", level: "International", pos: "Premium (C/SS/CF)", p1: 108, p2: 17 },
-            { id: 5, name: "Jacob Kendall", school: "Prep HS", level: "Prep", pos: "Corner (1B/3B/OF)", p1: 112, p2: 22 }
+            { id: 5, name: "Jacob Kendall", school: "Prep HS", level: "Prep", pos: "Corner (1B/3B/OF)", p1: 112, p2: 22 },
+            { id: 6, name: "Colt Emerson", school: "College", level: "College", pos: "Premium (C/SS/CF)", p1: 107, p2: 13 },
+            { id: 7, name: "Max Clark", school: "College", level: "College", pos: "Corner (1B/3B/OF)", p1: 104, p2: 12 },
+            { id: 8, name: "Cam Caminiti", school: "College", level: "College", pos: "Premium (C/SS/CF)", p1: 105, p2: 19 }
         ],
         bkb: [ 
             { id: 11, name: "AJ Dybantsa", school: "Prep HS", level: "Prep", pos: "Wing", p1: 64.0, p2: 38 }, 
             { id: 12, name: "Cameron Boozer", school: "College", level: "College", pos: "Big", p1: 66.0, p2: 35 }, 
             { id: 13, name: "Darryn Peterson", school: "College", level: "College", pos: "Guard", p1: 62.5, p2: 41 },
-            { id: 14, name: "Hugo Gonzalez", school: "Real Madrid", level: "International", pos: "Wing", p1: 61.5, p2: 36 },
-            { id: 15, name: "Egor Demin", school: "BYU", level: "International", pos: "Guard", p1: 63.0, p2: 39 }
+            { id: 14, name: "Caleb Wilson", school: "College", level: "College", pos: "Wing", p1: 61.0, p2: 36 },
+            { id: 15, name: "Koa Peat", school: "College", level: "College", pos: "Big", p1: 63.5, p2: 34 },
+            { id: 16, name: "Hugo Gonzalez", school: "Real Madrid", level: "International", pos: "Wing", p1: 61.5, p2: 36 },
+            { id: 17, name: "Nolan Traore", school: "NBL France", level: "International", pos: "Guard", p1: 58.0, p2: 33 },
+            { id: 18, name: "Egor Demin", school: "BYU", level: "International", pos: "Guard", p1: 63.0, p2: 39 }
         ],
         cfb: [ 
             { id: 21, name: "Arch Manning", school: "Texas", level: "College", pos: "Skill", p1: 4.65, p2: 92 }, 
             { id: 22, name: "Jeremiyah Love", school: "Notre Dame", level: "College", pos: "Skill", p1: 4.38, p2: 90 }, 
             { id: 23, name: "Caleb Downs", school: "Ohio State", level: "College", pos: "Skill", p1: 4.45, p2: 94 },
-            { id: 24, name: "Will Campbell", school: "LSU", level: "College", pos: "Trenches", p1: 5.15, p2: 89 },
-            { id: 25, name: "Zachariah Branch", school: "USC", level: "College", pos: "Skill", p1: 4.32, p2: 88 }
+            { id: 24, name: "Nico Iamaleava", school: "Tennessee", level: "College", pos: "Skill", p1: 4.60, p2: 89 },
+            { id: 25, name: "Tetairoa McMillan", school: "Arizona", level: "College", pos: "Skill", p1: 4.42, p2: 91 },
+            { id: 26, name: "Will Campbell", school: "LSU", level: "College", pos: "Trenches", p1: 5.15, p2: 89 },
+            { id: 27, name: "Kage Casey", school: "Boise State", level: "College", pos: "Trenches", p1: 5.20, p2: 87 },
+            { id: 28, name: "Zachariah Branch", school: "USC", level: "College", pos: "Skill", p1: 4.32, p2: 88 }
         ],
         ihk: [ 
             { id: 31, name: "Gavin McKenna", school: "Medicine Hat", level: "CHL", pos: "Forward", p1: 23.8, p2: 66.0 }, 
             { id: 32, name: "James Hagens", school: "Boston College", level: "NCAA", pos: "Forward", p1: 23.5, p2: 65.0 }, 
             { id: 33, name: "Anton Silayev", school: "Torpedo KHL", level: "International", pos: "Defenseman", p1: 22.8, p2: 58.5 },
             { id: 34, name: "Ivan Demidov", school: "SKA", level: "International", pos: "Forward", p1: 24.1, p2: 64.5 },
-            { id: 35, name: "Porter Martone", school: "Brampton", level: "CHL", pos: "Forward", p1: 23.0, p2: 62.0 }
+            { id: 35, name: "Porter Martone", school: "Brampton", level: "CHL", pos: "Forward", p1: 23.0, p2: 62.0 },
+            { id: 36, name: "Michael Misa", school: "Saginaw", level: "CHL", pos: "Forward", p1: 23.2, p2: 61.5 },
+            { id: 37, name: "Viggo Bjorck", school: "Sweden", level: "International", pos: "Forward", p1: 22.5, p2: 59.0 },
+            { id: 38, name: "Ryder Ritchie", school: "Prince Albert", level: "CHL", pos: "Forward", p1: 22.9, p2: 60.5 }
         ],
         soc: [ 
             { id: 41, name: "Lamine Yamal", school: "Barcelona", level: "Top 5 Europe", pos: "Forward", p1: 21.8, p2: 85.5 }, 
             { id: 42, name: "Jude Bellingham", school: "Real Madrid", level: "Top 5 Europe", pos: "Midfielder", p1: 21.5, p2: 91.2 }, 
             { id: 43, name: "Kylian Mbappe", school: "Real Madrid", level: "Top 5 Europe", pos: "Forward", p1: 23.5, p2: 82.0 },
-            { id: 44, name: "Diego Gomez", school: "Inter Miami", level: "MLS", pos: "Midfielder", p1: 20.8, p2: 82.5 },
-            { id: 45, name: "Endrick", school: "Real Madrid", level: "Top 5 Europe", pos: "Forward", p1: 22.0, p2: 80.0 }
+            { id: 44, name: "Erling Haaland", school: "Man City", level: "Top 5 Europe", pos: "Forward", p1: 22.5, p2: 75.0 },
+            { id: 45, name: "Endrick", school: "Real Madrid", level: "Top 5 Europe", pos: "Forward", p1: 22.0, p2: 80.0 },
+            { id: 46, name: "Vinicius Jr", school: "Real Madrid", level: "Top 5 Europe", pos: "Forward", p1: 22.8, p2: 81.5 },
+            { id: 47, name: "Diego Gomez", school: "Inter Miami", level: "MLS", pos: "Midfielder", p1: 20.8, p2: 82.5 },
+            { id: 48, name: "Estevao Willian", school: "Palmeiras", level: "Other Intl", pos: "Forward", p1: 21.5, p2: 79.0 },
+            { id: 49, name: "Florian Wirtz", school: "Leverkusen", level: "Top 5 Europe", pos: "Midfielder", p1: 21.0, p2: 88.5 },
+            { id: 50, name: "Cole Palmer", school: "Man City", level: "Top 5 Europe", pos: "Forward", p1: 20.5, p2: 84.0 }
         ]
     },
     d1: {
         bsb: [ 
             { id: 51, name: "Zander Darby", school: "UCSB", level: "Mid-Major", pos: "Corner (1B/3B/OF)", p1: 104, p2: 15 }, 
-            { id: 52, name: "Jace LaViolette", school: "Texas A&M", level: "D1 Power", pos: "Corner (1B/3B/OF)", p1: 112, p2: 19 },
-            { id: 53, name: "San Jac Slugger", school: "San Jac CC", level: "JUCO", pos: "Premium (C/SS/CF)", p1: 101, p2: 22 },
-            { id: 54, name: "Tampa Power", school: "Tampa", level: "D2/D3", pos: "Corner (1B/3B/OF)", p1: 105, p2: 24 },
-            { id: 55, name: "DR Academy Star", school: "Intl Acad", level: "International", pos: "Premium (C/SS/CF)", p1: 102, p2: 19 }
+            { id: 52, name: "Ivan Brethowr", school: "UCSB", level: "Mid-Major", pos: "Corner (1B/3B/OF)", p1: 106, p2: 18 }, 
+            { id: 53, name: "Jace LaViolette", school: "Texas A&M", level: "D1 Power", pos: "Corner (1B/3B/OF)", p1: 112, p2: 19 },
+            { id: 54, name: "San Jac Slugger", school: "San Jac CC", level: "JUCO", pos: "Premium (C/SS/CF)", p1: 101, p2: 22 },
+            { id: 55, name: "Tampa Power", school: "Tampa", level: "D2/D3", pos: "Corner (1B/3B/OF)", p1: 105, p2: 24 },
+            { id: 56, name: "DR Academy Star", school: "Intl Acad", level: "International", pos: "Premium (C/SS/CF)", p1: 102, p2: 19 },
+            { id: 57, name: "Walters State CF", school: "Walters St", level: "JUCO", pos: "Premium (C/SS/CF)", p1: 96, p2: 14 },
+            { id: 58, name: "Rollins Ace", school: "Rollins", level: "D2/D3", pos: "Premium (C/SS/CF)", p1: 98, p2: 16 }
         ],
         bkb: [ 
             { id: 61, name: "Ajay Mitchell", school: "UCSB", level: "Mid-Major", pos: "Guard", p1: 58.5, p2: 39 }, 
-            { id: 62, name: "Ace Bailey", school: "Rutgers", level: "D1 Power", pos: "Wing", p1: 61.5, p2: 37 },
-            { id: 63, name: "Salt Lake Guard", school: "Salt Lake CC", level: "JUCO", pos: "Guard", p1: 56.0, p2: 36 },
-            { id: 64, name: "Nova SE Shooter", school: "Nova SE", level: "D2/D3", pos: "Wing", p1: 63.5, p2: 42 },
-            { id: 65, name: "INSEP Euro", school: "INSEP", level: "International", pos: "Big", p1: 64.0, p2: 25 }
+            { id: 62, name: "Yohan Traore", school: "UCSB", level: "Mid-Major", pos: "Big", p1: 61.0, p2: 20 }, 
+            { id: 63, name: "Ace Bailey", school: "Rutgers", level: "D1 Power", pos: "Wing", p1: 61.5, p2: 37 },
+            { id: 64, name: "Dylan Harper", school: "Rutgers", level: "D1 Power", pos: "Guard", p1: 59.0, p2: 38 },
+            { id: 65, name: "VJ Edgecombe", school: "Baylor", level: "D1 Power", pos: "Guard", p1: 60.5, p2: 35 },
+            { id: 66, name: "Salt Lake Guard", school: "Salt Lake CC", level: "JUCO", pos: "Guard", p1: 56.0, p2: 36 },
+            { id: 67, name: "Nova SE Shooter", school: "Nova SE", level: "D2/D3", pos: "Wing", p1: 63.5, p2: 42 },
+            { id: 68, name: "INSEP Euro", school: "INSEP", level: "International", pos: "Big", p1: 64.0, p2: 25 }
         ],
         cfb: [ 
             { id: 71, name: "NDSU Transfer", school: "NDSU", level: "FCS", pos: "Skill", p1: 4.65, p2: 88 }, 
-            { id: 72, name: "Toledo Receiver", school: "Toledo", level: "Group of 5", pos: "Skill", p1: 4.45, p2: 82 },
-            { id: 73, name: "Hutchinson Edge", school: "Hutchinson", level: "JUCO", pos: "Trenches", p1: 4.70, p2: 78 },
-            { id: 74, name: "Ferris State Star", school: "Ferris State", level: "D2/D3", pos: "Skill", p1: 4.52, p2: 86 },
-            { id: 75, name: "Georgia RB", school: "Georgia", level: "FBS Power", pos: "Skill", p1: 4.45, p2: 90 }
+            { id: 72, name: "SDSU Linebacker", school: "SDSU", level: "FCS", pos: "Skill", p1: 4.58, p2: 85 }, 
+            { id: 73, name: "Toledo Receiver", school: "Toledo", level: "Group of 5", pos: "Skill", p1: 4.45, p2: 82 },
+            { id: 74, name: "Hutchinson Edge", school: "Hutchinson", level: "JUCO", pos: "Trenches", p1: 4.70, p2: 78 },
+            { id: 75, name: "Ferris State Star", school: "Ferris State", level: "D2/D3", pos: "Skill", p1: 4.52, p2: 86 },
+            { id: 76, name: "Iowa Western QB", school: "Iowa Western", level: "JUCO", pos: "Skill", p1: 4.80, p2: 79 },
+            { id: 77, name: "Montana St RB", school: "Montana St", level: "FCS", pos: "Skill", p1: 4.50, p2: 84 },
+            { id: 78, name: "Grand Valley DT", school: "Grand Valley", level: "D2/D3", pos: "Trenches", p1: 5.10, p2: 83 }
         ],
         ihk: [ 
             { id: 81, name: "Penticton Center", school: "Penticton", level: "Junior A", pos: "Forward", p1: 22.5, p2: 58.0 }, 
-            { id: 82, name: "London Defender", school: "London", level: "CHL", pos: "Defenseman", p1: 21.8, p2: 55.5 },
-            { id: 83, name: "Hobart Star", school: "Hobart", level: "D3", pos: "Forward", p1: 21.0, p2: 60.0 },
-            { id: 84, name: "Denver Wing", school: "Denver", level: "NCAA D1", pos: "Forward", p1: 23.1, p2: 62.5 },
-            { id: 85, name: "Frolunda Wing", school: "Frolunda U20", level: "International", pos: "Forward", p1: 22.1, p2: 57.5 }
+            { id: 82, name: "Fargo Goalie", school: "Fargo", level: "Junior A", pos: "Defenseman", p1: 19.8, p2: 62.5 }, 
+            { id: 83, name: "London Defender", school: "London", level: "CHL", pos: "Defenseman", p1: 21.8, p2: 55.5 },
+            { id: 84, name: "Hobart Star", school: "Hobart", level: "D3", pos: "Forward", p1: 21.0, p2: 60.0 },
+            { id: 85, name: "Frolunda Wing", school: "Frolunda U20", level: "International", pos: "Forward", p1: 22.1, p2: 57.5 },
+            { id: 86, name: "Brooks Bandits F", school: "Brooks", level: "Junior A", pos: "Forward", p1: 21.5, p2: 56.5 },
+            { id: 87, name: "Adrian College D", school: "Adrian", level: "D3", pos: "Defenseman", p1: 20.5, p2: 61.0 },
+            { id: 88, name: "Halifax Knights G", school: "Halifax", level: "CHL", pos: "Defenseman", p1: 19.5, p2: 59.0 }
         ],
         soc: [ 
             { id: 91, name: "Clemson Striker", school: "Clemson", level: "NCAA D1", pos: "Forward", p1: 21.5, p2: 78.0 }, 
-            { id: 92, name: "Monroe CC Winger", school: "Monroe CC", level: "JUCO", pos: "Forward", p1: 21.8, p2: 72.0 },
-            { id: 93, name: "Franklin Pierce F", school: "Franklin Pierce", level: "D2/D3", pos: "Forward", p1: 21.0, p2: 75.5 },
-            { id: 94, name: "Sporting U19 Euro", school: "Sporting CP", level: "International", pos: "Midfielder", p1: 20.5, p2: 83.0 },
-            { id: 95, name: "Indiana Defender", school: "Indiana", level: "NCAA D1", pos: "Defender", p1: 19.8, p2: 88.5 }
+            { id: 92, name: "Stanford Mid", school: "Stanford", level: "NCAA D1", pos: "Midfielder", p1: 20.5, p2: 85.0 }, 
+            { id: 93, name: "Indiana Defender", school: "Indiana", level: "NCAA D1", pos: "Defender", p1: 19.8, p2: 88.5 },
+            { id: 94, name: "Monroe CC Winger", school: "Monroe CC", level: "JUCO", pos: "Forward", p1: 21.8, p2: 72.0 },
+            { id: 95, name: "Tyler JC Mid", school: "Tyler JC", level: "JUCO", pos: "Midfielder", p1: 20.0, p2: 81.0 },
+            { id: 96, name: "Franklin Pierce F", school: "Franklin Pierce", level: "D2/D3", pos: "Forward", p1: 21.0, p2: 75.5 },
+            { id: 97, name: "Tufts Defender", school: "Tufts", level: "D2/D3", pos: "Defender", p1: 19.2, p2: 86.0 },
+            { id: 98, name: "Sporting U19 Euro", school: "Sporting CP", level: "International", pos: "Midfielder", p1: 20.5, p2: 83.0 }
         ]
     }
 };
 
 const teamDB = {
     pro: {
-        bsb: [{name: "Yankees", lvl: "MLB", off: 5.2, def: 3.8}, {name: "Dodgers", lvl: "MLB", off: 5.5, def: 3.5}, {name: "LSU", lvl: "College Draft Class", off: 4.0, def: 5.5}],
-        bkb: [{name: "Celtics", lvl: "NBA", off: 122, def: 110}, {name: "Nuggets", lvl: "NBA", off: 119, def: 112}, {name: "UConn", lvl: "College Draft Class", off: 98, def: 125}],
-        cfb: [{name: "Chiefs", lvl: "NFL", off: 28.5, def: 17.5}, {name: "49ers", lvl: "NFL", off: 29.0, def: 16.8}, {name: "Georgia", lvl: "College Draft Class", off: 14.5, def: 35.5}],
-        ihk: [{name: "Panthers", lvl: "NHL", off: 3.5, def: 2.2}, {name: "Oilers", lvl: "NHL", off: 3.8, def: 2.5}, {name: "Boston Coll", lvl: "College Draft Class", off: 1.8, def: 4.5}],
-        soc: [{name: "Real Madrid", lvl: "La Liga", off: 2.5, def: 0.8}, {name: "Man City", lvl: "EPL", off: 2.8, def: 0.9}, {name: "Clemson", lvl: "College Draft Class", off: 1.2, def: 2.1}]
+        bsb: [{name: "Yankees", lvl: "MLB", off: 5.2, def: 3.8}, {name: "Dodgers", lvl: "MLB", off: 5.5, def: 3.5}, {name: "Braves", lvl: "MLB", off: 5.0, def: 3.9}, {name: "Orioles", lvl: "MLB", off: 4.8, def: 4.0}, {name: "LSU", lvl: "College Draft Class", off: 4.0, def: 5.5}, {name: "Tennessee", lvl: "College Draft Class", off: 4.2, def: 5.1}],
+        bkb: [{name: "Celtics", lvl: "NBA", off: 122, def: 110}, {name: "Nuggets", lvl: "NBA", off: 119, def: 112}, {name: "Thunder", lvl: "NBA", off: 118, def: 111}, {name: "Timberwolves", lvl: "NBA", off: 115, def: 108}, {name: "UConn", lvl: "College Draft Class", off: 98, def: 125}, {name: "Houston", lvl: "College Draft Class", off: 95, def: 122}],
+        cfb: [{name: "Chiefs", lvl: "NFL", off: 28.5, def: 17.5}, {name: "49ers", lvl: "NFL", off: 29.0, def: 16.8}, {name: "Ravens", lvl: "NFL", off: 28.0, def: 17.0}, {name: "Lions", lvl: "NFL", off: 27.5, def: 21.0}, {name: "Georgia", lvl: "College Draft Class", off: 14.5, def: 35.5}, {name: "Texas", lvl: "College Draft Class", off: 15.2, def: 33.0}],
+        ihk: [{name: "Panthers", lvl: "NHL", off: 3.5, def: 2.2}, {name: "Oilers", lvl: "NHL", off: 3.8, def: 2.5}, {name: "Rangers", lvl: "NHL", off: 3.4, def: 2.4}, {name: "Stars", lvl: "NHL", off: 3.3, def: 2.6}, {name: "Boston Coll", lvl: "College Draft Class", off: 1.8, def: 4.5}, {name: "Denver", lvl: "College Draft Class", off: 2.0, def: 4.2}],
+        soc: [{name: "Real Madrid", lvl: "La Liga", off: 2.5, def: 0.8}, {name: "Man City", lvl: "EPL", off: 2.8, def: 0.9}, {name: "Bayern Munich", lvl: "Bundesliga", off: 2.6, def: 1.0}, {name: "Inter Miami", lvl: "MLS", off: 2.1, def: 1.4}, {name: "Clemson", lvl: "College Draft Class", off: 1.2, def: 2.1}, {name: "Stanford", lvl: "College Draft Class", off: 1.1, def: 2.3}]
     },
     d1: {
-        bsb: [{name: "LSU", lvl: "D1", off: 8.5, def: 3.2}, {name: "Tennessee", lvl: "D1", off: 9.1, def: 3.5}, {name: "San Jac", lvl: "JUCO", off: 5.5, def: 6.5}],
-        bkb: [{name: "UConn", lvl: "D1", off: 126, def: 94}, {name: "Houston", lvl: "D1", off: 119, def: 87}, {name: "Salt Lake CC", lvl: "JUCO", off: 102, def: 108}],
-        cfb: [{name: "Georgia", lvl: "FBS", off: 42, def: 15}, {name: "Ohio State", lvl: "FBS", off: 38, def: 12}, {name: "Iowa Western", lvl: "JUCO", off: 20, def: 35}],
-        ihk: [{name: "Denver", lvl: "NCAA", off: 4.8, def: 2.1}, {name: "Boston Coll", lvl: "NCAA", off: 4.5, def: 1.8}, {name: "Hobart", lvl: "D3", off: 3.1, def: 3.5}],
-        soc: [{name: "Clemson", lvl: "D1", off: 2.5, def: 0.8}, {name: "Stanford", lvl: "D1", off: 2.2, def: 0.9}, {name: "Franklin Pierce", lvl: "D2", off: 1.8, def: 1.5}]
+        bsb: [{name: "LSU", lvl: "D1", off: 8.5, def: 3.2}, {name: "Tennessee", lvl: "D1", off: 9.1, def: 3.5}, {name: "Texas A&M", lvl: "D1", off: 8.2, def: 3.6}, {name: "Wake Forest", lvl: "D1", off: 8.0, def: 3.4}, {name: "UCSB", lvl: "Mid-Major", off: 7.2, def: 4.1}, {name: "Tampa", lvl: "D2", off: 6.0, def: 5.8}, {name: "San Jac", lvl: "JUCO", off: 5.5, def: 6.5}],
+        bkb: [{name: "UConn", lvl: "D1", off: 126, def: 94}, {name: "Houston", lvl: "D1", off: 119, def: 87}, {name: "Purdue", lvl: "D1", off: 122, def: 95}, {name: "Kansas", lvl: "D1", off: 115, def: 92}, {name: "UCSB", lvl: "Mid-Major", off: 112, def: 99}, {name: "Nova SE", lvl: "D2", off: 108, def: 102}, {name: "Salt Lake CC", lvl: "JUCO", off: 102, def: 108}],
+        cfb: [{name: "Georgia", lvl: "FBS", off: 42, def: 15}, {name: "Ohio State", lvl: "FBS", off: 38, def: 12}, {name: "Texas", lvl: "FBS", off: 39, def: 16}, {name: "Alabama", lvl: "FBS", off: 35, def: 18}, {name: "NDSU", lvl: "FCS", off: 28, def: 22}, {name: "Harding", lvl: "D2", off: 45, def: 10}, {name: "Iowa Western", lvl: "JUCO", off: 20, def: 35}],
+        ihk: [{name: "Denver", lvl: "NCAA", off: 4.8, def: 2.1}, {name: "Boston Coll", lvl: "NCAA", off: 4.5, def: 1.8}, {name: "Minnesota", lvl: "NCAA", off: 4.2, def: 2.4}, {name: "Michigan", lvl: "NCAA", off: 4.0, def: 2.6}, {name: "Hobart", lvl: "D3", off: 3.1, def: 3.5}, {name: "Brooks", lvl: "Junior A", off: 2.8, def: 4.0}],
+        soc: [{name: "Clemson", lvl: "D1", off: 2.5, def: 0.8}, {name: "Stanford", lvl: "D1", off: 2.2, def: 0.9}, {name: "Indiana", lvl: "D1", off: 2.0, def: 0.7}, {name: "Marshall", lvl: "D1", off: 2.1, def: 1.0}, {name: "Franklin Pierce", lvl: "D2", off: 1.8, def: 1.5}, {name: "Tyler JC", lvl: "JUCO", off: 1.5, def: 1.8}]
     }
 };
 
@@ -369,7 +439,9 @@ function initApp() {
     ['pro', 'd1'].forEach(m => {
         ['bsb', 'bkb', 'cfb', 'ihk', 'soc'].forEach(s => {
             let id = `${m}_${s}`;
-            if (!masterDB[m][s]) masterDB[m][s] = JSON.parse(localStorage.getItem(`${id}_db`)) || [...defaultData[m][s]];
+            if (!masterDB[m][s]) {
+                masterDB[m][s] = JSON.parse(localStorage.getItem(`${id}_db`)) || [...defaultData[m][s]];
+            }
             liveData[m][s] = { score: 0, events: [] };
             processData(m, s); updateProfile(m, s); renderDB(m, s); renderBoard(m, s);
         });
@@ -546,7 +618,7 @@ function updateProfile(m, s) {
         type: "indicator", mode: "gauge", 
         gauge: {axis: {range: [null, 100]}, bar: {color: c.color}} 
     }], {
-        paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:40, b:20, l:40, r:40},
+        paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:40, b:20, l:30, r:30},
         annotations: [{ x: 0.5, y: 0.15, xref: 'paper', yref: 'paper', text: score.toString(), font: {size: 45, color: 'white'}, showarrow: false }]
     }, {displayModeBar: false, responsive: true});
     
@@ -593,9 +665,6 @@ function saveToBoard(m, s) {
     let score = calcScore(m, s, p1, p2);
     let list = JSON.parse(localStorage.getItem(`${px}_board`)) || []; list.push({ name, pos: document.getElementById(`${px}_pos`).value, p1, p2, score });
     localStorage.setItem(`${px}_board`, JSON.stringify(list)); alert(`${name} saved!`); renderBoard(m, s);
-    
-    // Cloud push if connected
-    if(window.cloudSaveToBoard) window.cloudSaveToBoard(m, s, name, document.getElementById(`${px}_pos`).value, p1, p2, score);
 }
 
 function renderBoard(m, s) {
@@ -628,12 +697,9 @@ function logLive(m, s, action, pts, type) {
     liveData[m][s].events.push({ x: liveData[m][s].events.length + 1, y: Math.random() * 10, type, action });
     updateLiveChart(m, s);
 
-    let away = parseInt(document.getElementById(`${px}_away_input`).value) || 0;
-    if(window.cloudLogLive) window.cloudLogLive(m, s, liveData[m][s].score, away, action, type, liveData[m][s].events.length);
-
     let toggle = document.getElementById(`${px}_sync_toggle`); let url = document.getElementById(`${px}_webhook_url`);
     if (toggle && toggle.checked && url && url.value) {
-        let payload = { mode: m.toUpperCase(), sport: s.toUpperCase(), homeScore: liveData[m][s].score, awayScore: away, action: action, type: type, playCount: liveData[m][s].events.length };
+        let payload = { mode: m.toUpperCase(), sport: s.toUpperCase(), homeScore: liveData[m][s].score, awayScore: parseInt(document.getElementById(`${px}_away_input`).value) || 0, action: action, type: type, playCount: liveData[m][s].events.length };
         fetch(url.value, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(e => console.log("Sync Error"));
     }
 }
