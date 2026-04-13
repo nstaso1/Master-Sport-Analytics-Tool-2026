@@ -1,25 +1,31 @@
-# Install required packages if you don't have them yet:
-# install.packages("jsonlite")
-# install.packages("dplyr")
-
+library(plumber)
 library(jsonlite)
-library(dplyr)
 
-cat("Loading Mystics Analytics Database...\n")
+db_file <- "mystics_db.json"
 
-# 1. Load the JSON exported from your dashboard
-json_data <- fromJSON("MysticsAnalytics_Save.json")
+init_db <- function() {
+  if (!file.exists(db_file)) {
+    write_json(list(masterDB = list(), boards = list()), db_file, auto_unbox = TRUE)
+  }
+}
 
-# 2. Extract and combine Pickleball data from the nested lists
-pbl_minor <- json_data$masterDB$minor$pbl
-pbl_pro <- json_data$masterDB$proleague$pbl
-pbl_df <- bind_rows(pbl_minor, pbl_pro)
+#* @filter cors
+function(res) {
+  res$setHeader("Access-Control-Allow-Origin", "*")
+  res$setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+  res$setHeader("Access-Control-Allow-Headers", "Content-Type")
+  plumber::forward()
+}
 
-cat("Running Multiple Linear Regression Model...\n")
+#* @get /api/database
+function() {
+  init_db()
+  read_json(db_file)
+}
 
-# 3. Run the Regression Model
-# Predicting 'score' based on p1 (DUPR), p2 (Drop %), and p3 (Kitchen %)
-model <- lm(score ~ p1 + p2 + p3, data = pbl_df)
-
-# 4. Print the summary statistics (p-values, R-squared, coefficients)
-summary(model)
+#* @post /api/database
+function(req, res) {
+  data <- jsonlite::fromJSON(req$postBody, simplifyVector = FALSE)
+  write_json(data, db_file, auto_unbox = TRUE)
+  list(status = "success", message = "Database saved.")
+}
