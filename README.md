@@ -3,7 +3,7 @@
 
 An elite, multi-platform scouting and live game analytics architecture supporting Baseball, Basketball, Football, Hockey, and Soccer across both Pro and D1 College levels.
 
-This Google Site Link Frontend HTML: [https://sites.google.com/view/mysticsglobalsportanalytics?usp=sharing]([url](https://sites.google.com/view/mysticsglobalsportanalytics?usp=sharing))
+Google Site Link Frontend HTML: [https://sites.google.com/view/mysticsglobalsportanalytics?usp=sharing]([url](https://sites.google.com/view/mysticsglobalsportanalytics?usp=sharing))
 
 ## 🏗️ System Architecture
 This project utilizes a Hub-and-Spoke architecture with Firebase as the central nervous system:
