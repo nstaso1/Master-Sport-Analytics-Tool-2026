@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mystics Omni-Sport Analytics</title>
+    <title>Mystics Sports Analytics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/darkly/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
@@ -20,8 +19,8 @@
         .mode-tabs .nav-link { font-size: 1rem; font-weight: bold; padding: 14px 18px; border-radius: 10px 10px 0 0; color: #888; border: 2px solid transparent; border-bottom: none; cursor: pointer; }
         .mode-tabs .nav-link.active { background-color: #333; }
         
-        .sub-tabs .nav-link { color: #aaa; font-size: 0.90rem; padding: 12px 15px; font-weight: bold; border-radius: 0; cursor: pointer; }
-        .sub-tabs .nav-link.active { background-color: #2b2b2b !important; color: white !important;}
+        .sub-tabs .nav-link { color: #aaa; font-size: 0.90rem; padding: 12px 15px; font-weight: bold; border-radius: 0; cursor: pointer; border-bottom: 2px solid transparent; }
+        .sub-tabs .nav-link.active { background-color: #2b2b2b !important; color: white !important; border-bottom: 2px solid #fff;}
         
         .section-header { font-size: 0.70rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #444; margin: 8px 0 4px 0; padding-bottom: 2px; font-weight: bold;}
         .slider-label { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; margin-bottom: 2px;}
@@ -30,7 +29,6 @@
         .chart-mobile-fix { width: 100%; position: relative; overflow: hidden; }
         .score-input { font-size: 3.5rem; font-weight: 900; width: 100px; background: transparent; border: none; color: white; text-align: center; margin: 0 auto; display: block;}
         
-        /* Live Scout Buttons */
         .btn-live-action { font-weight: bold; padding: 8px 4px; font-size: 0.75rem; position: relative; width: 100%; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.1s;}
         .btn-live-action:active { transform: scale(0.95); }
         .action-badge { position: absolute; top: -8px; right: -8px; font-size: 0.7rem; padding: 4px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); border-radius: 50%; }
@@ -42,16 +40,39 @@
 
 <div class="container-fluid p-0 p-md-3" id="app-container" style="max-width: 1600px;">
     <div class="d-flex top-bar-mobile justify-content-between align-items-center mb-3 mt-2">
-        <h3 class="fw-bold text-light m-0">⚡ Mystics Omni-Engine <br class="d-block d-md-none"><span class="text-secondary fs-6 fs-md-5">(v17.0 Full 5-Tool)</span></h3>
+        <h3 class="fw-bold text-light m-0">⚡ Mystics Sports Analytics <br class="d-block d-md-none"><span class="text-success fs-6 fs-md-5">(v18.2 Random Forest)</span></h3>
         <div class="d-flex flex-column flex-md-row gap-2 align-items-stretch">
+            <button class="btn btn-outline-info fw-bold" data-bs-toggle="modal" data-bs-target="#modelExplanationModal">ℹ️ How it Works</button>
             <button class="btn btn-outline-light fw-bold" data-bs-toggle="modal" data-bs-target="#dataModal">💾 Data Manager</button>
             <button class="btn btn-outline-danger fw-bold" onclick="if(confirm('Wipe ALL Sports Data?')) { localStorage.clear(); location.reload(); }">⚠️ Reset All</button>
         </div>
     </div>
 
-    <ul class="nav nav-pills sport-tabs mt-2 mb-3" id="sport-tabs"></ul>
+    <ul class="nav nav-pills sport-tabs mt-2 mb-3" id="main-nav-tabs"></ul>
+    <div id="main-content"></div>
+</div>
 
-    <div id="sport-content"></div>
+<div class="modal fade" id="modelExplanationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-info">
+            <div class="modal-header border-info bg-info bg-opacity-25">
+                <h5 class="modal-title fw-bold text-light">🧠 How the Readiness Grade is Calculated</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted">The Mystics Omni-Engine does not use a simple weighted average. It uses a custom client-side <strong>Random Forest Regressor</strong> to evaluate prospects, simulating how a real scouting department analyzes non-linear data.</p>
+                
+                <h6 class="text-info fw-bold mt-4">1. Tier Normalization</h6>
+                <p class="small">Before any math occurs, the player's raw metrics are measured against the <strong>Target Baseline</strong> for their specific competitive tier (D1, Pro, Minors). This converts their raw data into a standardized 0-100 scale.</p>
+
+                <h6 class="text-warning fw-bold mt-4">2. The Random Forest Ensemble</h6>
+                <p class="small">The normalized stats are fed into an ensemble of <strong>50 distinct decision trees</strong>. Each tree looks at a random subset of the player's 5 tools (Feature Bagging) and sets random non-linear split thresholds to vote on the player's overall grade. The final Overall Grade is the aggregate average of all 50 trees.</p>
+
+                <h6 class="text-success fw-bold mt-4">3. Non-Linear Synergy & Bust Penalties</h6>
+                <p class="small mb-0">Unlike standard linear math, this model captures thresholds perfectly. If a player possesses elite primary traits that cross specific thresholds, the trees award a massive "Synergy Boost" recognizing superstar potential. Conversely, if a fundamental trait drops below a critical threshold, the trees apply a "Bust Penalty" that tanks their grade harder than linear subtraction would.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="dataModal" tabindex="-1">
@@ -80,9 +101,6 @@
 </div>
 
 <script>
-// ==========================================
-// 1. OMNI-SPORT CONFIGURATION & DATA
-// ==========================================
 const SPORT_CONFIG = {
     'bkb': {
         name: 'Basketball', icon: '🏀', color: '#fd7e14', espnPrefix: 'basketball',
@@ -92,16 +110,17 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'AST/TO Ratio', min: 0.5, max: 5.0, step: 0.1, unit: '', inv: false },
         m4: { id: 'p4', label: 'TRB %', min: 2, max: 25, step: 0.1, unit: '%', inv: false },
         m5: { id: 'p5', label: 'Defensive BPM', min: -5, max: 8, step: 0.1, unit: '', inv: false },
+        kine: { k1: {label: 'Vertical Pop', min: 24, max: 48, step: 0.5, unit: ' in'}, k2: {label: 'Release Time', min: 0.3, max: 0.9, step: 0.01, unit: ' s', inv: true}, k3: {label: 'Wingspan Delta', min: -2, max: 9, step: 0.5, unit: ' in'} },
         acts: [
             {id:'m2', n:'Make 2PT', pts:2, t:'success', c:'#ffc107'}, {id:'m3', n:'Make 3PT', pts:3, t:'success', c:'#fd7e14'},
             {id:'ast', n:'Assist', pts:0, t:'success', c:'#20c997'}, {id:'reb', n:'Rebound', pts:0, t:'success', c:'#0dcaf0'},
-            {id:'stl', n:'Stl/Blk', pts:0, t:'success', c:'#198754'}, {id:'x2', n:'Miss 2PT', pts:0, t:'fail', c:'#e83e8c'},
+            {id:'dk', n:'Def Kill', pts:0, t:'success', c:'#198754'}, {id:'x2', n:'Miss 2PT', pts:0, t:'fail', c:'#e83e8c'},
             {id:'x3', n:'Miss 3PT', pts:0, t:'fail', c:'#dc3545'}, {id:'to', n:'Turnover', pts:0, t:'fail', c:'#6f42c1'}
         ],
         radarLabels: ['Scoring', 'Efficiency', 'Playmaking', 'Defense/Reb', 'Security'],
         tiers: { 
-            'pro': { t_p1: 65, t_p2: 45, t_p3: 3.0, t_p4: 15.0, t_p5: 4.0, levels: ['Prep','College Draft','Intl'] }, 
-            'd1': { t_p1: 60, t_p2: 38, t_p3: 2.5, t_p4: 12.0, t_p5: 3.0, levels: ['D1 Power','Mid-Major','JUCO'] },
+             'pro': { t_p1: 65, t_p2: 45, t_p3: 3.0, t_p4: 15.0, t_p5: 4.0, levels: ['Prep','College Draft','Intl'] }, 
+             'd1': { t_p1: 60, t_p2: 38, t_p3: 2.5, t_p4: 12.0, t_p5: 3.0, levels: ['D1 Power','Mid-Major','JUCO', 'D2/D3'] },
             'minor': { t_p1: 63, t_p2: 40, t_p3: 2.8, t_p4: 14.0, t_p5: 3.5, levels: ['G-League','Overtime Elite','Intl Dev'] },
             'proleague': { t_p1: 68, t_p2: 42, t_p3: 3.5, t_p4: 18.0, t_p5: 5.0, levels: ['NBA','EuroLeague'] }
         }
@@ -110,10 +129,11 @@ const SPORT_CONFIG = {
         name: 'Baseball', icon: '⚾', color: '#198754', espnPrefix: 'baseball',
         apiOpts: '<option value="mlb">MLB</option><option value="college-baseball">NCAA</option>',
         m1: { id: 'p1', label: 'Max EV', min: 85, max: 120, step: 1, unit: ' mph', inv: false },
-        m2: { id: 'p2', label: 'K %', min: 5, max: 40, step: 0.5, unit: '%', inv: true }, // Lower better
+        m2: { id: 'p2', label: 'K %', min: 5, max: 40, step: 0.5, unit: '%', inv: true },
         m3: { id: 'p3', label: 'Barrel %', min: 2, max: 25, step: 0.5, unit: '%', inv: false },
         m4: { id: 'p4', label: 'Chase %', min: 15, max: 45, step: 0.5, unit: '%', inv: true },
         m5: { id: 'p5', label: 'Sprint Speed', min: 24, max: 31, step: 0.1, unit: ' ft/s', inv: false },
+        kine: { k1: {label: 'Arm Slot', min: 15, max: 90, step: 1, unit: ' °'}, k2: {label: 'Extension', min: 5.0, max: 7.5, step: 0.1, unit: ' ft'}, k3: {label: 'Launch Angle', min: -10, max: 40, step: 1, unit: ' °'} },
         acts: [
             {id:'hr', n:'Home Run', pts:1, t:'success', c:'#198754'}, {id:'xbh', n:'XBH', pts:0, t:'success', c:'#20c997'}, 
             {id:'sin', n:'Single', pts:0, t:'success', c:'#0dcaf0'}, {id:'wlk', n:'Walk', pts:0, t:'success', c:'#ffc107'}, 
@@ -122,8 +142,8 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Power/SLG', 'Contact', 'Average', 'OBP/Patience', 'Discipline'],
         tiers: { 
-            'pro': { t_p1: 115, t_p2: 20, t_p3: 15, t_p4: 25, t_p5: 29.5, levels: ['Prep','College Draft','Intl'] }, 
-            'd1': { t_p1: 108, t_p2: 22, t_p3: 12, t_p4: 28, t_p5: 28.5, levels: ['D1 Power','Mid-Major','JUCO'] },
+             'pro': { t_p1: 115, t_p2: 20, t_p3: 15, t_p4: 25, t_p5: 29.5, levels: ['Prep','College Draft','Intl'] }, 
+             'd1': { t_p1: 108, t_p2: 22, t_p3: 12, t_p4: 28, t_p5: 28.5, levels: ['D1 Power','Mid-Major','JUCO', 'D2/D3'] },
             'minor': { t_p1: 112, t_p2: 21, t_p3: 14, t_p4: 26, t_p5: 29.0, levels: ['AAA','AA','High-A','Low-A'] },
             'proleague': { t_p1: 118, t_p2: 18, t_p3: 18, t_p4: 24, t_p5: 30.0, levels: ['MLB','NPB','KBO'] }
         }
@@ -136,6 +156,7 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'Production', min: 50, max: 99, step: 1, unit: '', inv: false },
         m4: { id: 'p4', label: 'Measurables', min: 50, max: 99, step: 1, unit: '', inv: false },
         m5: { id: 'p5', label: 'Football IQ', min: 50, max: 99, step: 1, unit: '', inv: false },
+        kine: { k1: {label: 'Vert Jump', min: 25, max: 45, step: 0.5, unit: ' in'}, k2: {label: 'Broad Jump', min: 100, max: 140, step: 1, unit: ' in'}, k3: {label: '3-Cone Drill', min: 6.5, max: 8.0, step: 0.01, unit: ' s', inv: true} },
         acts: [
             {id:'td', n:'Touchdown', pts:6, t:'success', c:'#0dcaf0'}, {id:'fg', n:'Field Goal', pts:3, t:'success', c:'#20c997'}, 
             {id:'1st', n:'1st Down', pts:0, t:'success', c:'#198754'}, {id:'tkl', n:'Stop/Tkl', pts:0, t:'success', c:'#ffc107'}, 
@@ -144,10 +165,33 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Scoring', 'Efficiency', 'Movement', 'Defense', 'Security'],
         tiers: { 
-            'pro': { t_p1: 4.45, t_p2: 95, t_p3: 90, t_p4: 92, t_p5: 90, levels: ['Draft Prep','Combine'] }, 
-            'd1': { t_p1: 4.60, t_p2: 85, t_p3: 80, t_p4: 82, t_p5: 80, levels: ['FBS','FCS','JUCO','D2/D3'] },
+             'pro': { t_p1: 4.45, t_p2: 95, t_p3: 90, t_p4: 92, t_p5: 90, levels: ['Draft Prep','Combine'] }, 
+             'd1': { t_p1: 4.60, t_p2: 85, t_p3: 80, t_p4: 82, t_p5: 80, levels: ['FBS','FCS','JUCO','D2/D3'] },
             'minor': { t_p1: 4.55, t_p2: 88, t_p3: 85, t_p4: 86, t_p5: 85, levels: ['UFL','CFL','Arena'] },
             'proleague': { t_p1: 4.40, t_p2: 98, t_p3: 95, t_p4: 96, t_p5: 97, levels: ['NFL'] }
+        }
+    },
+    'glf': {
+        name: 'Golf', icon: '⛳', color: '#28a745', espnPrefix: 'golf',
+        apiOpts: '<option value="pga">PGA Tour</option><option value="lpga">LPGA</option><option value="liv">LIV Golf</option>',
+        m1: { id: 'p1', label: 'Driving Dist', min: 250, max: 340, step: 1, unit: ' yds', inv: false },
+        m2: { id: 'p2', label: 'Driving Acc', min: 40, max: 80, step: 0.5, unit: '%', inv: false },
+        m3: { id: 'p3', label: 'GIR %', min: 50, max: 80, step: 0.5, unit: '%', inv: false },
+        m4: { id: 'p4', label: 'Scrambling %', min: 40, max: 75, step: 0.5, unit: '%', inv: false },
+        m5: { id: 'p5', label: 'SG: Total', min: -3.0, max: 3.5, step: 0.1, unit: '', inv: false },
+        kine: { k1: {label: 'Clubhead Spd', min: 100, max: 135, step: 0.5, unit: ' mph'}, k2: {label: 'Smash Factor', min: 1.30, max: 1.52, step: 0.01, unit: ''}, k3: {label: 'Apex Height', min: 60, max: 140, step: 1, unit: ' ft'} },
+        acts: [
+            {id:'eag', n:'Eagle+', pts:2, t:'success', c:'#20c997'}, {id:'bir', n:'Birdie', pts:1, t:'success', c:'#198754'},
+            {id:'par', n:'Par', pts:0, t:'success', c:'#0dcaf0'}, {id:'bog', n:'Bogey', pts:0, t:'fail', c:'#fd7e14'},
+            {id:'dbl', n:'Double+', pts:0, t:'fail', c:'#dc3545'}, {id:'fwy', n:'Fairway Hit', pts:0, t:'success', c:'#ffc107'},
+            {id:'gir', n:'GIR', pts:0, t:'success', c:'#6f42c1'}, {id:'pen', n:'Penalty', pts:0, t:'fail', c:'#6c757d'}
+        ],
+        radarLabels: ['Distance', 'Accuracy', 'Approach', 'Short Game', 'Scoring'],
+        tiers: { 
+             'pro': { t_p1: 285, t_p2: 55, t_p3: 58, t_p4: 50, t_p5: 0.5, levels: ['Junior', 'Amateur'] }, 
+             'd1': { t_p1: 295, t_p2: 58, t_p3: 62, t_p4: 55, t_p5: 1.0, levels: ['NCAA D1', 'NCAA D2/D3'] },
+            'minor': { t_p1: 300, t_p2: 60, t_p3: 65, t_p4: 58, t_p5: 1.5, levels: ['Korn Ferry', 'Challenge Tour'] },
+            'proleague': { t_p1: 310, t_p2: 62, t_p3: 68, t_p4: 62, t_p5: 2.0, levels: ['PGA Tour', 'LIV', 'LPGA'] }
         }
     },
     'ihk': {
@@ -158,6 +202,7 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'Corsi For %', min: 40, max: 65, step: 0.5, unit: '%', inv: false },
         m4: { id: 'p4', label: 'HD Chances', min: 0, max: 10, step: 0.1, unit: '/60', inv: false },
         m5: { id: 'p5', label: 'Def Shares', min: -2, max: 5, step: 0.1, unit: '', inv: false },
+        kine: { k1: {label: 'Stride Length', min: 3, max: 6, step: 0.1, unit: ' ft'}, k2: {label: 'Release Time', min: 0.2, max: 0.8, step: 0.01, unit: ' s', inv: true}, k3: {label: 'Hip Rotation', min: 30, max: 70, step: 1, unit: ' °'} },
         acts: [
             {id:'gl', n:'Goal', pts:1, t:'success', c:'#6f42c1'}, {id:'ast', n:'Assist', pts:0, t:'success', c:'#20c997'}, 
             {id:'sog', n:'Shot on Goal', pts:0, t:'success', c:'#0dcaf0'}, {id:'hit', n:'Hit', pts:0, t:'success', c:'#ffc107'}, 
@@ -166,8 +211,8 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Scoring', 'Playmaking', 'Pressure', 'Defense', 'Discipline'],
         tiers: { 
-            'pro': { t_p1: 23.5, t_p2: 65, t_p3: 58, t_p4: 6.0, t_p5: 3.0, levels: ['Draft Prep','Intl'] }, 
-            'd1': { t_p1: 21.5, t_p2: 58, t_p3: 52, t_p4: 4.0, t_p5: 1.5, levels: ['NCAA','CHL','Junior A'] },
+             'pro': { t_p1: 23.5, t_p2: 65, t_p3: 58, t_p4: 6.0, t_p5: 3.0, levels: ['Draft Prep','Intl'] }, 
+             'd1': { t_p1: 21.5, t_p2: 58, t_p3: 52, t_p4: 4.0, t_p5: 1.5, levels: ['NCAA','CHL','Junior A'] },
             'minor': { t_p1: 22.5, t_p2: 62, t_p3: 55, t_p4: 5.0, t_p5: 2.0, levels: ['AHL','ECHL'] },
             'proleague': { t_p1: 24.5, t_p2: 75, t_p3: 60, t_p4: 8.0, t_p5: 4.0, levels: ['NHL','KHL','SHL'] }
         }
@@ -180,6 +225,7 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'Pass Comp %', min: 60, max: 95, step: 0.5, unit: '%', inv: false },
         m4: { id: 'p4', label: 'Prog Carries', min: 0, max: 15, step: 0.5, unit: '/90', inv: false },
         m5: { id: 'p5', label: 'Intercepts', min: 0, max: 5, step: 0.1, unit: '/90', inv: false },
+        kine: { k1: {label: 'Top Sprint', min: 18, max: 24, step: 0.1, unit: ' mph'}, k2: {label: 'Strike Force', min: 800, max: 1500, step: 10, unit: ' N'}, k3: {label: 'Acceleration', min: 2.0, max: 4.5, step: 0.1, unit: ' m/s²'} },
         acts: [
             {id:'gl', n:'Goal', pts:1, t:'success', c:'#e83e8c'}, {id:'ast', n:'Assist', pts:0, t:'success', c:'#20c997'}, 
             {id:'kp', n:'Key Pass', pts:0, t:'success', c:'#0dcaf0'}, {id:'tkl', n:'Tackle Won', pts:0, t:'success', c:'#198754'}, 
@@ -188,8 +234,8 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Finishing', 'Creation', 'Progression', 'Defense', 'Discipline'],
         tiers: { 
-            'pro': { t_p1: 23.0, t_p2: 90, t_p3: 85, t_p4: 10.0, t_p5: 3.0, levels: ['Academy','Intl U20'] }, 
-            'd1': { t_p1: 21.0, t_p2: 80, t_p3: 75, t_p4: 6.0, t_p5: 1.5, levels: ['NCAA D1','JUCO','D2/D3'] },
+             'pro': { t_p1: 23.0, t_p2: 90, t_p3: 85, t_p4: 10.0, t_p5: 3.0, levels: ['Academy','Intl U20'] }, 
+             'd1': { t_p1: 21.0, t_p2: 80, t_p3: 75, t_p4: 6.0, t_p5: 1.5, levels: ['NCAA D1','JUCO','D2/D3'] },
             'minor': { t_p1: 22.0, t_p2: 85, t_p3: 80, t_p4: 8.0, t_p5: 2.0, levels: ['USL','EFL Champ','Next Pro'] },
             'proleague': { t_p1: 23.5, t_p2: 95, t_p3: 90, t_p4: 12.0, t_p5: 3.5, levels: ['Top 5 Europe','MLS'] }
         }
@@ -202,6 +248,7 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'Winners', min: 5, max: 50, step: 1, unit: '', inv: false },
         m4: { id: 'p4', label: 'Brk Pt Sv %', min: 30, max: 80, step: 0.5, unit: '%', inv: false },
         m5: { id: 'p5', label: 'Ret Pts W %', min: 25, max: 55, step: 0.5, unit: '%', inv: false },
+        kine: { k1: {label: 'Serve Reach', min: 8.0, max: 10.5, step: 0.1, unit: ' ft'}, k2: {label: 'Hip Torque', min: 50, max: 150, step: 1, unit: ' N·m'}, k3: {label: 'Pronation', min: 60, max: 120, step: 1, unit: ' °'} },
         acts: [
             {id:'ace', n:'Ace', pts:1, t:'success', c:'#ffc107'}, {id:'win', n:'Winner', pts:1, t:'success', c:'#20c997'},
             {id:'1sw', n:'1st Srv Won', pts:0, t:'success', c:'#0dcaf0'}, {id:'rtw', n:'Return Won', pts:0, t:'success', c:'#198754'},
@@ -210,8 +257,8 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Serve', 'Return', 'Power', 'Consistency', 'Net Play'],
         tiers: { 
-            'pro': { t_p1: 65, t_p2: 20, t_p3: 30, t_p4: 65, t_p5: 42, levels: ['ITF Juniors'] }, 
-            'd1': { t_p1: 60, t_p2: 25, t_p3: 20, t_p4: 55, t_p5: 35, levels: ['NCAA D1', 'D2/D3'] },
+             'pro': { t_p1: 65, t_p2: 20, t_p3: 30, t_p4: 65, t_p5: 42, levels: ['ITF Juniors'] }, 
+             'd1': { t_p1: 60, t_p2: 25, t_p3: 20, t_p4: 55, t_p5: 35, levels: ['NCAA D1', 'JUCO', 'D2/D3'] },
             'minor': { t_p1: 62, t_p2: 22, t_p3: 25, t_p4: 60, t_p5: 38, levels: ['Challenger', 'Futures'] },
             'proleague': { t_p1: 70, t_p2: 15, t_p3: 40, t_p4: 70, t_p5: 45, levels: ['ATP', 'WTA'] }
         }
@@ -224,6 +271,7 @@ const SPORT_CONFIG = {
         m3: { id: 'p3', label: 'Dink Cons %', min: 50, max: 95, step: 0.5, unit: '%', inv: false },
         m4: { id: 'p4', label: 'Speedups W %', min: 30, max: 70, step: 0.5, unit: '%', inv: false },
         m5: { id: 'p5', label: 'UFE/Game', min: 0, max: 15, step: 0.5, unit: '', inv: true },
+        kine: { k1: {label: 'Reaction Time', min: 150, max: 350, step: 5, unit: ' ms', inv: true}, k2: {label: 'Paddle Speed', min: 30, max: 60, step: 1, unit: ' mph'}, k3: {label: 'Wingspan Reach', min: 65, max: 80, step: 0.5, unit: ' in'} },
         acts: [
             {id:'win', n:'Winner', pts:1, t:'success', c:'#e83e8c'}, {id:'drp', n:'3rd Shot Drop', pts:0, t:'success', c:'#20c997'},
             {id:'dnk', n:'Dink Won', pts:0, t:'success', c:'#0dcaf0'}, {id:'vol', n:'Volley Won', pts:0, t:'success', c:'#198754'},
@@ -232,8 +280,8 @@ const SPORT_CONFIG = {
         ],
         radarLabels: ['Dinks', 'Drops/Drives', 'Volleys', 'Agility', 'Consistency'],
         tiers: { 
-            'pro': { t_p1: 6.0, t_p2: 80, t_p3: 85, t_p4: 55, t_p5: 4.0, levels: ['Pro Qualifiers'] }, 
-            'd1': { t_p1: 5.5, t_p2: 75, t_p3: 75, t_p4: 45, t_p5: 6.0, levels: ['Amateur 5.0+'] },
+             'pro': { t_p1: 6.0, t_p2: 80, t_p3: 85, t_p4: 55, t_p5: 4.0, levels: ['Pro Qualifiers'] }, 
+             'd1': { t_p1: 5.5, t_p2: 75, t_p3: 75, t_p4: 45, t_p5: 6.0, levels: ['Amateur 5.0+'] },
             'minor': { t_p1: 5.8, t_p2: 78, t_p3: 80, t_p4: 50, t_p5: 5.0, levels: ['Minor League PB', 'APP'] },
             'proleague': { t_p1: 6.8, t_p2: 88, t_p3: 92, t_p4: 65, t_p5: 2.0, levels: ['PPA Tour', 'MLP Premier'] }
         }
@@ -241,41 +289,283 @@ const SPORT_CONFIG = {
 };
 
 let masterDB = {};
-// Initialize DB structure for all sports and tiers
 Object.keys(SPORT_CONFIG).forEach(s => {
     masterDB[s] = { 'pro': [], 'd1': [], 'minor': [], 'proleague': [] };
 });
 
-// Seed data
-masterDB['bsb']['pro'] = [ {id:1,name:"Ethan Holliday",school:"Prep HS",level:"Prep",p1:109,p2:15}, {id:2,name:"Trent Caraway",school:"Oregon St",level:"College Draft",p1:111,p2:18} ];
-masterDB['bsb']['d1'] = [ {id:51,name:"Zander Darby",school:"UCSB",level:"Mid-Major",p1:104,p2:15}, {id:53,name:"Jace LaViolette",school:"Texas A&M",level:"D1 Power",p1:112,p2:19} ];
-masterDB['bsb']['minor'] = [ {id:301,name:"Jackson Holliday",school:"Norfolk Tides",level:"AAA",p1:110,p2:18}, {id:302,name:"Roman Anthony",school:"Bowie Baysox",level:"AA",p1:108,p2:22} ];
-masterDB['bsb']['proleague'] = [ {id:401,name:"Aaron Judge",school:"Yankees",level:"MLB",p1:118,p2:28}, {id:402,name:"Shohei Ohtani",school:"Dodgers",level:"MLB",p1:115,p2:22} ];
+// ==========================================
+// ⛳ GOLF (glf)
+// ==========================================
+masterDB['glf']['pro'] = [
+    {id:701, name:"Miles Russell", school:"AJGA", level:"Junior", p1:290, p2:62, p3:65, p4:58, p5:1.5, k1:115, k2:1.48, k3:95},
+    {id:702, name:"Blades Brown", school:"AJGA", level:"Junior", p1:295, p2:58, p3:62, p4:55, p5:1.2, k1:118, k2:1.49, k3:100}
+];
+masterDB['glf']['d1'] = [
+    {id:711, name:"Jackson Koivun", school:"Auburn", level:"NCAA D1", p1:305, p2:60, p3:68, p4:62, p5:2.1, k1:120, k2:1.50, k3:105},
+    {id:712, name:"Gordon Sargent", school:"Vanderbilt", level:"NCAA D1", p1:315, p2:55, p3:66, p4:58, p5:1.9, k1:126, k2:1.50, k3:110}
+];
+masterDB['glf']['minor'] = [
+    {id:715, name:"Alden Allie", school:"Korn Ferry", level:"Korn Ferry", p1:308, p2:61, p3:67, p4:60, p5:1.6, k1:121, k2:1.49, k3:98}
+];
+masterDB['glf']['proleague'] = [
+    {id:721, name:"Scottie Scheffler", school:"PGA Tour", level:"PGA Tour", p1:302, p2:68, p3:74, p4:66, p5:2.8, k1:119, k2:1.50, k3:102},
+    {id:722, name:"Rory McIlroy", school:"PGA Tour", level:"PGA Tour", p1:318, p2:58, p3:69, p4:59, p5:2.4, k1:125, k2:1.51, k3:115},
+    {id:723, name:"Xander Schauffele", school:"PGA Tour", level:"PGA Tour", p1:305, p2:64, p3:71, p4:65, p5:2.5, k1:118, k2:1.50, k3:100},
+    {id:724, name:"Nelly Korda", school:"LPGA", level:"LPGA", p1:275, p2:72, p3:75, p4:64, p5:2.6, k1:105, k2:1.50, k3:85},
+    {id:725, name:"Bryson DeChambeau", school:"LIV Golf", level:"LIV", p1:325, p2:55, p3:68, p4:60, p5:2.2, k1:132, k2:1.50, k3:120}
+];
 
-masterDB['bkb']['pro'] = [ {id:11,name:"AJ Dybantsa",school:"Prep HS",level:"Prep",p1:64,p2:38}, {id:12,name:"Cameron Boozer",school:"College Draft",level:"College Draft",p1:66,p2:35} ];
-masterDB['bkb']['d1'] = [ {id:61,name:"Ajay Mitchell",school:"UCSB",level:"Mid-Major",p1:58.5,p2:39}, {id:63,name:"Ace Bailey",school:"Rutgers",level:"D1 Power",p1:61.5,p2:37} ];
-masterDB['bkb']['minor'] = [ {id:131,name:"Mac McClung",school:"Osceola",level:"G-League",p1:61.5,p2:38} ];
-masterDB['bkb']['proleague'] = [ {id:141,name:"Nikola Jokic",school:"Nuggets",level:"NBA",p1:68,p2:35} ];
+// ==========================================
+// 🏒 HOCKEY (ihk)
+// ==========================================
+masterDB['ihk']['pro'] = [
+    {id:401, name:"Gavin McKenna", school:"Medicine Hat", level:"Draft Prep", p1:23.4, p2:70, p3:62, p4:7.5, p5:1.5, k1:4.8, k2:0.42, k3:58},
+    {id:402, name:"Michael Misa", school:"Saginaw", level:"Draft Prep", p1:23.1, p2:68, p3:60, p4:6.8, p5:1.8, k1:4.6, k2:0.45, k3:55},
+    {id:403, name:"Anton Frondell", school:"Djurgardens", level:"Intl", p1:22.5, p2:69, p3:58, p4:6.2, p5:2.1, k1:4.5, k2:0.48, k3:52},
+    {id:404, name:"Porter Martone", school:"Brampton", level:"Draft Prep", p1:22.2, p2:72, p3:59, p4:7.1, p5:2.5, k1:4.7, k2:0.40, k3:60},
+    {id:405, name:"Ivan Ryabkin", school:"Dynamo MHL", level:"Intl", p1:22.6, p2:71, p3:57, p4:6.5, p5:1.2, k1:4.4, k2:0.44, k3:54}
+];
+masterDB['ihk']['d1'] = [
+    {id:411, name:"James Hagens", school:"Boston College", level:"NCAA", p1:22.6, p2:65, p3:63, p4:8.0, p5:1.5, k1:4.5, k2:0.48, k3:52},
+    {id:412, name:"Gabe Perreault", school:"Boston College", level:"NCAA", p1:21.8, p2:66, p3:64, p4:7.5, p5:1.8, k1:4.3, k2:0.44, k3:50},
+    {id:413, name:"Zayne Parekh", school:"Saginaw", level:"CHL", p1:22.8, p2:68, p3:60, p4:6.5, p5:3.1, k1:4.8, k2:0.45, k3:53},
+    {id:414, name:"Zeev Buium", school:"Denver", level:"NCAA", p1:22.5, p2:64, p3:62, p4:5.2, p5:3.8, k1:4.7, k2:0.52, k3:49},
+    {id:415, name:"Berkly Catton", school:"Spokane", level:"CHL", p1:23.2, p2:67, p3:59, p4:7.2, p5:1.9, k1:4.6, k2:0.41, k3:55}
+];
+masterDB['ihk']['minor'] = [
+    {id:430, name:"Isaac Howard", school:"Bakersfield Condors", level:"AHL", p1:23.5, p2:68, p3:56.5, p4:6.8, p5:1.5, k1:4.6, k2:0.40, k3:56},
+    {id:431, name:"Mavrik Bourque", school:"Texas Stars", level:"AHL", p1:22.5, p2:68, p3:58, p4:6.5, p5:2.1, k1:4.6, k2:0.42, k3:54},
+    {id:432, name:"Jiri Kulich", school:"Rochester", level:"AHL", p1:22.8, p2:72, p3:56, p4:6.2, p5:1.5, k1:4.7, k2:0.35, k3:58},
+    {id:433, name:"Brad Lambert", school:"Manitoba", level:"AHL", p1:23.2, p2:65, p3:54, p4:6.0, p5:1.2, k1:4.9, k2:0.44, k3:50},
+    {id:434, name:"Shane Wright", school:"Coachella Valley", level:"AHL", p1:22.4, p2:70, p3:59, p4:5.8, p5:2.8, k1:4.5, k2:0.39, k3:53}
+];
+masterDB['ihk']['proleague'] = [
+    {id:451, name:"Connor McDavid", school:"Oilers", level:"NHL", p1:24.8, p2:72, p3:64, p4:9.5, p5:2.5, k1:5.9, k2:0.35, k3:65},
+    {id:452, name:"Nathan MacKinnon", school:"Avalanche", level:"NHL", p1:24.5, p2:78, p3:65, p4:9.2, p5:2.8, k1:5.6, k2:0.38, k3:63},
+    {id:453, name:"Auston Matthews", school:"Maple Leafs", level:"NHL", p1:23.1, p2:80, p3:62, p4:8.8, p5:3.5, k1:5.2, k2:0.25, k3:68},
+    {id:454, name:"Connor Bedard", school:"Blackhawks", level:"NHL", p1:22.8, p2:77, p3:55, p4:8.0, p5:1.2, k1:4.8, k2:0.22, k3:70},
+    {id:455, name:"Cale Makar", school:"Avalanche", level:"NHL", p1:24.1, p2:73, p3:63, p4:6.5, p5:4.8, k1:5.4, k2:0.40, k3:66}
+];
 
-masterDB['cfb']['proleague'] = [ {id:221,name:"Patrick Mahomes",school:"Chiefs",level:"NFL",p1:4.8,p2:99}, {id:222,name:"Lamar Jackson",school:"Ravens",level:"NFL",p1:4.35,p2:99} ];
-masterDB['soc']['proleague'] = [ {id:321,name:"Lionel Messi",school:"Inter Miami",level:"MLS",p1:19.5,p2:98}, {id:322,name:"Kevin De Bruyne",school:"Man City",level:"Top 5 Europe",p1:20.5,p2:96} ];
-masterDB['ihk']['proleague'] = [ {id:421,name:"Connor McDavid",school:"Oilers",level:"NHL",p1:24.5,p2:72}, {id:422,name:"Nathan MacKinnon",school:"Avalanche",level:"NHL",p1:24.2,p2:76} ];
-masterDB['ten']['proleague'] = [ {id:521,name:"Novak Djokovic",school:"ATP",level:"ATP",p1:72,p2:12}, {id:522,name:"Aryna Sabalenka",school:"WTA",level:"WTA",p1:68,p2:15} ];
-masterDB['pkl']['proleague'] = [ {id:621,name:"Ben Johns",school:"PPA",level:"PPA Tour",p1:7.02,p2:88}, {id:622,name:"Anna Leigh Waters",school:"PPA",level:"PPA Tour",p1:6.85,p2:89} ];
+// ==========================================
+// 🏀 BASKETBALL (bkb)
+// ==========================================
+masterDB['bkb']['pro'] = [ 
+    {id:11, name:"AJ Dybantsa", school:"Utah Prep", level:"Prep", p1:64, p2:38, p3:2.1, p4:12, p5:2.5, k1:41.5, k2:0.62, k3:5}, 
+    {id:12, name:"Cameron Boozer", school:"Columbus HS", level:"Prep", p1:66, p2:35, p3:2.8, p4:18, p5:3.2, k1:38, k2:0.75, k3:4},
+    {id:13, name:"Darryn Peterson", school:"Huntington Prep", level:"Prep", p1:62, p2:39, p3:2.5, p4:10, p5:2.0, k1:39, k2:0.60, k3:6},
+    {id:14, name:"Hugo Yanez", school:"Real Madrid", level:"Intl", p1:65, p2:41, p3:3.5, p4:8, p5:1.5, k1:34, k2:0.55, k3:2}
+];
+masterDB['bkb']['d1'] = [ 
+    {id:60, name:"Cooper Flagg", school:"Duke", level:"D1 Power", p1:62, p2:36, p3:2.8, p4:16, p5:5.5, k1:39, k2:0.65, k3:6},
+    {id:61, name:"Ajay Mitchell", school:"UCSB", level:"Mid-Major", p1:58.5, p2:39, p3:3.2, p4:9, p5:1.2, k1:36, k2:0.68, k3:2}, 
+    {id:62, name:"Josh Pierre-Louis", school:"UCSB", level:"Mid-Major", p1:55.0, p2:32, p3:2.5, p4:11, p5:2.4, k1:43, k2:0.72, k3:5}, 
+    {id:63, name:"Ace Bailey", school:"Rutgers", level:"D1 Power", p1:61.5, p2:37, p3:2.1, p4:14, p5:2.8, k1:42, k2:0.58, k3:6}, 
+    {id:64, name:"Dylan Harper", school:"Rutgers", level:"D1 Power", p1:59.0, p2:36, p3:3.8, p4:10, p5:1.8, k1:38, k2:0.65, k3:4}
+];
+masterDB['bkb']['minor'] = [ 
+    {id:131, name:"Mac McClung", school:"Osceola Magic", level:"G-League", p1:61.5, p2:38, p3:3.0, p4:8, p5:0.5, k1:44, k2:0.65, k3:0},
+    {id:132, name:"Oscar Tshiebwe", school:"Indiana Mad Ants", level:"G-League", p1:64.0, p2:20, p3:1.2, p4:25, p5:1.5, k1:35, k2:0.80, k3:8},
+    {id:133, name:"Adam Flagler", school:"OKC Blue", level:"G-League", p1:60.0, p2:40, p3:3.5, p4:7, p5:0.8, k1:36, k2:0.58, k3:1}
+];
+masterDB['bkb']['proleague'] = [ 
+    {id:141, name:"Nikola Jokic", school:"Nuggets", level:"NBA", p1:68, p2:35, p3:4.8, p4:20, p5:3.5, k1:28, k2:0.85, k3:7}, 
+    {id:142, name:"Anthony Edwards", school:"Timberwolves", level:"NBA", p1:61, p2:38, p3:2.5, p4:10, p5:2.0, k1:43, k2:0.60, k3:4},
+    {id:143, name:"Victor Wembanyama", school:"Spurs", level:"NBA", p1:60, p2:34, p3:2.2, p4:18, p5:6.5, k1:36, k2:0.65, k3:9},
+    {id:144, name:"Shai Gilgeous-Alexander", school:"Thunder", level:"NBA", p1:63, p2:37, p3:3.5, p4:11, p5:3.0, k1:38, k2:0.62, k3:6},
+    {id:145, name:"Luka Doncic", school:"Mavericks", level:"NBA", p1:62, p2:38, p3:4.5, p4:15, p5:1.5, k1:32, k2:0.70, k3:3}
+];
+
+// ==========================================
+// ⚾ BASEBALL (bsb)
+// ==========================================
+masterDB['bsb']['pro'] = [ 
+    {id:1, name:"Ethan Holliday", school:"Stillwater HS", level:"Prep", p1:109, p2:15, p3:14, p4:22, p5:28, k1:45, k2:6.8, k3:18}, 
+    {id:2, name:"Trent Caraway", school:"Oregon St", level:"College Draft", p1:111, p2:18, p3:12, p4:25, p5:27, k1:50, k2:6.5, k3:15},
+    {id:3, name:"Cam Caminiti", school:"Saguaro HS", level:"Prep", p1:105, p2:12, p3:8, p4:20, p5:29, k1:75, k2:7.1, k3:10},
+    {id:4, name:"Bryce Rainer", school:"Harvard-Westlake", level:"Prep", p1:104, p2:18, p3:11, p4:24, p5:28.5, k1:55, k2:6.6, k3:14}
+];
+masterDB['bsb']['d1'] = [ 
+    {id:51, name:"Zander Darby", school:"UCSB", level:"Mid-Major", p1:104, p2:15, p3:10, p4:25, p5:27.5, k1:55, k2:6.4, k3:12}, 
+    {id:52, name:"Matt Ager", school:"UCSB", level:"Mid-Major", p1:98, p2:20, p3:5, p4:30, p5:25, k1:80, k2:6.8, k3:5},
+    {id:53, name:"Jace LaViolette", school:"Texas A&M", level:"D1 Power", p1:112, p2:19, p3:15, p4:28, p5:28, k1:60, k2:7.1, k3:20}, 
+    {id:54, name:"Charlie Condon", school:"Georgia", level:"D1 Power", p1:114, p2:16, p3:18, p4:22, p5:26.5, k1:58, k2:6.9, k3:18},
+    {id:55, name:"Travis Bazzana", school:"Oregon St", level:"D1 Power", p1:106, p2:14, p3:12, p4:18, p5:29.5, k1:45, k2:6.2, k3:15}
+];
+masterDB['bsb']['minor'] = [ 
+    {id:301, name:"Jackson Holliday", school:"Norfolk Tides", level:"AAA", p1:110, p2:18, p3:11, p4:20, p5:29, k1:48, k2:6.6, k3:16}, 
+    {id:302, name:"Roman Anthony", school:"Bowie Baysox", level:"AA", p1:108, p2:22, p3:14, p4:24, p5:27.5, k1:55, k2:6.7, k3:19},
+    {id:303, name:"Marcelo Mayer", school:"Portland Sea Dogs", level:"AA", p1:106, p2:20, p3:10, p4:25, p5:28, k1:50, k2:6.5, k3:14},
+    {id:304, name:"Dylan Crews", school:"Rochester Red Wings", level:"AAA", p1:111, p2:17, p3:13, p4:22, p5:29.5, k1:52, k2:6.4, k3:15}
+];
+masterDB['bsb']['proleague'] = [ 
+    {id:401, name:"Aaron Judge", school:"Yankees", level:"MLB", p1:118, p2:28, p3:22, p4:24, p5:27, k1:65, k2:7.2, k3:22}, 
+    {id:402, name:"Shohei Ohtani", school:"Dodgers", level:"MLB", p1:115, p2:22, p3:19, p4:26, p5:29.5, k1:75, k2:7.5, k3:18},
+    {id:403, name:"Bobby Witt Jr.", school:"Royals", level:"MLB", p1:112, p2:16, p3:15, p4:28, p5:30.5, k1:50, k2:6.4, k3:14},
+    {id:404, name:"Gunnar Henderson", school:"Orioles", level:"MLB", p1:114, p2:21, p3:16, p4:25, p5:28.8, k1:55, k2:6.6, k3:16},
+    {id:405, name:"Paul Skenes", school:"Pirates", level:"MLB", p1:102, p2:35, p3:4, p4:30, p5:26, k1:85, k2:7.4, k3:8}
+];
+
+// ==========================================
+// 🏈 FOOTBALL (cfb)
+// ==========================================
+masterDB['cfb']['pro'] = [ 
+    {id:201, name:"Julian Lewis", school:"Carrollton HS", level:"Draft Prep", p1:4.65, p2:88, p3:90, p4:85, p5:92, k1:32, k2:115, k3:7.1},
+    {id:202, name:"Bryce Underwood", school:"Belleville HS", level:"Draft Prep", p1:4.55, p2:92, p3:88, p4:90, p5:85, k1:35, k2:120, k3:6.9},
+    {id:203, name:"DJ Lagway", school:"Florida", level:"Draft Prep", p1:4.60, p2:90, p3:85, p4:92, p5:88, k1:33, k2:118, k3:7.0}
+];
+masterDB['cfb']['d1'] = [ 
+    {id:211, name:"Jalen Milroe", school:"Alabama", level:"FBS", p1:4.45, p2:94, p3:88, p4:92, p5:84, k1:36, k2:125, k3:6.9}, 
+    {id:212, name:"Arch Manning", school:"Texas", level:"FBS", p1:4.65, p2:86, p3:82, p4:88, p5:90, k1:31, k2:116, k3:7.2},
+    {id:213, name:"Ryan Williams", school:"Alabama", level:"FBS", p1:4.32, p2:97, p3:95, p4:90, p5:85, k1:40, k2:132, k3:6.6},
+    {id:214, name:"Travis Hunter", school:"Colorado", level:"FBS", p1:4.42, p2:95, p3:98, p4:92, p5:95, k1:38, k2:128, k3:6.7}
+];
+masterDB['cfb']['minor'] = [ 
+    {id:215, name:"AJ McCarron", school:"Battlehawks", level:"UFL", p1:4.9, p2:80, p3:85, p4:75, p5:90, k1:28, k2:105, k3:7.4},
+    {id:216, name:"Adrian Martinez", school:"Stallions", level:"UFL", p1:4.55, p2:88, p3:82, p4:85, p5:80, k1:34, k2:118, k3:6.9},
+    {id:217, name:"Hakeem Butler", school:"Battlehawks", level:"UFL", p1:4.58, p2:86, p3:88, p4:90, p5:82, k1:36, k2:122, k3:7.0}
+];
+masterDB['cfb']['proleague'] = [ 
+    {id:221, name:"Patrick Mahomes", school:"Chiefs", level:"NFL", p1:4.8, p2:99, p3:99, p4:95, p5:99, k1:30, k2:114, k3:6.95}, 
+    {id:222, name:"Lamar Jackson", school:"Ravens", level:"NFL", p1:4.35, p2:99, p3:96, p4:95, p5:92, k1:36, k2:128, k3:6.8},
+    {id:223, name:"CJ Stroud", school:"Texans", level:"NFL", p1:4.7, p2:95, p3:94, p4:92, p5:96, k1:32, k2:116, k3:7.1},
+    {id:224, name:"Justin Jefferson", school:"Vikings", level:"NFL", p1:4.43, p2:98, p3:99, p4:96, p5:94, k1:38, k2:126, k3:6.7},
+    {id:225, name:"Christian McCaffrey", school:"49ers", level:"NFL", p1:4.48, p2:97, p3:98, p4:94, p5:96, k1:37, k2:122, k3:6.6}
+];
+
+// ==========================================
+// ⚽ SOCCER (soc)
+// ==========================================
+masterDB['soc']['pro'] = [ 
+    {id:301, name:"Cavan Sullivan", school:"Philly Academy", level:"Academy", p1:21.5, p2:82, p3:80, p4:8.5, p5:1.2, k1:21.0, k2:950, k3:3.8},
+    {id:302, name:"Francesco Camarda", school:"AC Milan U19", level:"Academy", p1:20.8, p2:85, p3:75, p4:6.0, p5:1.0, k1:20.5, k2:1020, k3:3.5},
+    {id:303, name:"Ethan Nwaneri", school:"Arsenal U21", level:"Academy", p1:22.0, p2:84, p3:82, p4:9.0, p5:1.5, k1:21.8, k2:980, k3:3.9}
+];
+masterDB['soc']['d1'] = [ 
+    {id:311, name:"Ousmane Sylla", school:"Clemson", level:"NCAA D1", p1:22.0, p2:84, p3:78, p4:7.5, p5:1.8, k1:21.8, k2:1050, k3:3.9},
+    {id:312, name:"Forster Ajago", school:"Duke", level:"NCAA D1", p1:21.2, p2:80, p3:75, p4:6.0, p5:1.2, k1:20.9, k2:1150, k3:3.4}
+];
+masterDB['soc']['minor'] = [ 
+    {id:315, name:"Fidel Barajas", school:"Charleston", level:"USL", p1:22.2, p2:83, p3:76, p4:8.2, p5:1.5, k1:21.5, k2:980, k3:4.0},
+    {id:316, name:"Albert Dikwa", school:"Rhode Island", level:"USL", p1:21.5, p2:86, p3:72, p4:5.5, p5:1.0, k1:21.0, k2:1120, k3:3.6}
+];
+masterDB['soc']['proleague'] = [ 
+    {id:321, name:"Lionel Messi", school:"Inter Miami", level:"MLS", p1:19.5, p2:98, p3:92, p4:12.0, p5:1.0, k1:19.0, k2:1200, k3:4.2}, 
+    {id:322, name:"Kevin De Bruyne", school:"Man City", level:"Top 5 Europe", p1:20.5, p2:96, p3:90, p4:10.5, p5:1.5, k1:20.0, k2:1350, k3:3.5},
+    {id:323, name:"Kylian Mbappe", school:"Real Madrid", level:"Top 5 Europe", p1:23.5, p2:95, p3:84, p4:14.0, p5:0.5, k1:23.2, k2:1250, k3:4.4},
+    {id:324, name:"Jude Bellingham", school:"Real Madrid", level:"Top 5 Europe", p1:21.8, p2:94, p3:88, p4:11.0, p5:2.5, k1:21.2, k2:1100, k3:3.8},
+    {id:325, name:"Erling Haaland", school:"Man City", level:"Top 5 Europe", p1:22.5, p2:92, p3:75, p4:6.5, p5:0.5, k1:22.1, k2:1450, k3:3.6}
+];
+
+// ==========================================
+// 🎾 TENNIS (ten)
+// ==========================================
+masterDB['ten']['pro'] = [ 
+    {id:501, name:"Joao Fonseca", school:"ITF", level:"ITF Juniors", p1:66, p2:22, p3:25, p4:65, p5:38, k1:9.0, k2:110, k3:95},
+    {id:502, name:"Alina Korneeva", school:"ITF", level:"ITF Juniors", p1:62, p2:25, p3:20, p4:60, p5:40, k1:8.5, k2:90, k3:85},
+    {id:503, name:"Joel Schwarzler", school:"ITF", level:"ITF Juniors", p1:64, p2:24, p3:22, p4:62, p5:36, k1:9.1, k2:105, k3:92}
+];
+masterDB['ten']['d1'] = [ 
+    {id:511, name:"Eliot Spizzirri", school:"Texas", level:"NCAA D1", p1:68, p2:20, p3:28, p4:68, p5:35, k1:9.2, k2:115, k3:92},
+    {id:512, name:"Fiona Crawley", school:"UNC", level:"NCAA D1", p1:64, p2:22, p3:20, p4:60, p5:38, k1:8.8, k2:95, k3:88},
+    {id:513, name:"Murphy Cassone", school:"ASU", level:"NCAA D1", p1:65, p2:24, p3:25, p4:62, p5:36, k1:9.0, k2:100, k3:90}
+];
+masterDB['ten']['minor'] = [ 
+    {id:515, name:"Dino Prizmic", school:"Challenger Tour", level:"Challenger", p1:65, p2:18, p3:24, p4:66, p5:40, k1:9.5, k2:120, k3:98},
+    {id:516, name:"Brenda Fruhvirtova", school:"WTA 125", level:"Challenger", p1:60, p2:20, p3:18, p4:58, p5:42, k1:8.6, k2:100, k3:90},
+    {id:517, name:"Learner Tien", school:"Challenger Tour", level:"Challenger", p1:62, p2:22, p3:20, p4:60, p5:38, k1:9.0, k2:105, k3:94}
+];
+masterDB['ten']['proleague'] = [ 
+    {id:521, name:"Jannik Sinner", school:"ATP", level:"ATP", p1:70, p2:14, p3:35, p4:75, p5:42, k1:9.8, k2:135, k3:105},
+    {id:522, name:"Carlos Alcaraz", school:"ATP", level:"ATP", p1:68, p2:16, p3:38, p4:72, p5:44, k1:9.5, k2:145, k3:110},
+    {id:523, name:"Novak Djokovic", school:"ATP", level:"ATP", p1:72, p2:12, p3:32, p4:78, p5:45, k1:9.8, k2:130, k3:108}, 
+    {id:524, name:"Aryna Sabalenka", school:"WTA", level:"WTA", p1:68, p2:15, p3:30, p4:70, p5:40, k1:9.4, k2:140, k3:105},
+    {id:525, name:"Iga Swiatek", school:"WTA", level:"WTA", p1:71, p2:12, p3:28, p4:74, p5:46, k1:9.0, k2:125, k3:100}
+];
+
+// ==========================================
+// 🏓 PICKLEBALL (pkl)
+// ==========================================
+masterDB['pkl']['pro'] = [ 
+    {id:601, name:"Jack Sock", school:"PPA Qual", level:"Pro Qualifiers", p1:6.2, p2:75, p3:80, p4:65, p5:6.0, k1:180, k2:52, k3:75},
+    {id:602, name:"Hurricane Tyra Black", school:"APP", level:"Pro Qualifiers", p1:5.9, p2:78, p3:82, p4:55, p5:5.5, k1:220, k2:45, k3:72}
+];
+masterDB['pkl']['d1'] = [ 
+    {id:611, name:"Local 5.0 Ringer", school:"Amateur", level:"Amateur 5.0+", p1:5.4, p2:72, p3:70, p4:45, p5:7.0, k1:240, k2:40, k3:70},
+    {id:612, name:"Club Champion", school:"Amateur", level:"Amateur 5.0+", p1:5.1, p2:68, p3:65, p4:40, p5:8.5, k1:260, k2:38, k3:68}
+];
+masterDB['pkl']['minor'] = [ 
+    {id:615, name:"Hunter Johnson", school:"APP", level:"APP", p1:6.4, p2:82, p3:85, p4:55, p5:4.5, k1:200, k2:48, k3:74},
+    {id:616, name:"Salome Devidze", school:"APP", level:"APP", p1:6.3, p2:80, p3:84, p4:52, p5:5.0, k1:210, k2:46, k3:71},
+    {id:617, name:"Andrei Daescu", school:"APP", level:"APP", p1:6.5, p2:84, p3:86, p4:58, p5:4.0, k1:190, k2:50, k3:76}
+];
+masterDB['pkl']['proleague'] = [ 
+    {id:621, name:"Ben Johns", school:"PPA", level:"PPA Tour", p1:7.05, p2:88, p3:95, p4:65, p5:2.0, k1:160, k2:55, k3:76}, 
+    {id:622, name:"Anna Leigh Waters", school:"PPA", level:"PPA Tour", p1:6.90, p2:89, p3:92, p4:68, p5:2.5, k1:165, k2:58, k3:72},
+    {id:623, name:"Federico Staksrud", school:"PPA", level:"PPA Tour", p1:6.98, p2:87, p3:94, p4:62, p5:2.2, k1:168, k2:54, k3:75},
+    {id:624, name:"Catherine Parenteau", school:"PPA", level:"PPA Tour", p1:6.80, p2:86, p3:90, p4:60, p5:3.0, k1:175, k2:51, k3:70},
+    {id:625, name:"Tyson McGuffin", school:"PPA", level:"PPA Tour", p1:6.92, p2:84, p3:88, p4:64, p5:3.5, k1:170, k2:53, k3:74}
+];
 
 let activeSport = 'bkb';
 let scoutState = { events: [], countsHome: {}, countsAway: {}, impactHome: 50, impactAway: 50 };
 
 // ==========================================
-// 2. DYNAMIC DOM RENDERER
+// CLIENT-SIDE RANDOM FOREST SIMULATOR
 // ==========================================
+class OmniForest {
+    constructor(n_estimators = 50) {
+        this.n_estimators = n_estimators;
+        this.forest = [];
+        this.initForest();
+    }
+
+    initForest() {
+        for(let i=0; i < this.n_estimators; i++) {
+            let featureSubset = [0,1,2,3,4].sort(() => 0.5 - Math.random()).slice(0, 3); 
+            let treeNodes = featureSubset.map(featIndex => {
+                return {
+                    feature: featIndex,
+                    threshold: Math.random() * 50 + 40,
+                    passMultiplier: 1.0 + (Math.random() * 0.3),
+                    failMultiplier: 0.7 + (Math.random() * 0.3)
+                };
+            });
+            this.forest.push({ nodes: treeNodes, baseWeight: Math.random() * 0.5 + 0.7 });
+        }
+    }
+
+    predict(s1, s2, s3, s4, s5) {
+        let stats = [s1, s2, s3, s4, s5];
+        let forestPredictions = [];
+
+        this.forest.forEach(tree => {
+            let treeScore = 0;
+            tree.nodes.forEach(node => {
+                let statValue = stats[node.feature];
+                if (statValue >= node.threshold) {
+                    treeScore += (statValue * node.passMultiplier);
+                } else {
+                    treeScore += (statValue * node.failMultiplier);
+                }
+            });
+            forestPredictions.push((treeScore / tree.nodes.length) * tree.baseWeight);
+        });
+
+        let finalScore = forestPredictions.reduce((a, b) => a + b, 0) / this.n_estimators;
+        return Math.max(0, Math.min(100, Math.round(finalScore)));
+    }
+}
+const globalRF = new OmniForest(50);
+
+
 function initApp() {
     let navHtml = Object.keys(SPORT_CONFIG).map(s => 
         `<li class="nav-item"><button class="nav-link px-3 py-2 ${s===activeSport?'active':''}" style="${s===activeSport?'background-color:'+SPORT_CONFIG[s].color+'; color:white;':''}" onclick="switchSport('${s}')">${SPORT_CONFIG[s].icon} ${SPORT_CONFIG[s].name}</button></li>`
     ).join('');
-    document.getElementById('sport-tabs').innerHTML = navHtml;
+    
+    document.getElementById('main-nav-tabs').innerHTML = navHtml;
 
-    // Load LocalStorage and Fill Mock P3/P4/P5 values dynamically
     Object.keys(SPORT_CONFIG).forEach(s => {
         ['pro', 'd1', 'minor', 'proleague'].forEach(m => {
             let savedDB = JSON.parse(localStorage.getItem(`omni_${s}_${m}_db`));
@@ -285,16 +575,24 @@ function initApp() {
                 if(p.p3 === undefined) p.p3 = t.t_p3 || (conf.m3.min+conf.m3.max)/2;
                 if(p.p4 === undefined) p.p4 = t.t_p4 || (conf.m4.min+conf.m4.max)/2;
                 if(p.p5 === undefined) p.p5 = t.t_p5 || (conf.m5.min+conf.m5.max)/2;
+                if(p.k1 === undefined) p.k1 = (conf.kine.k1.min+conf.kine.k1.max)/2;
+                if(p.k2 === undefined) p.k2 = (conf.kine.k2.min+conf.kine.k2.max)/2;
+                if(p.k3 === undefined) p.k3 = (conf.kine.k3.min+conf.kine.k3.max)/2;
                 p.score = calcScore(s, m, p.p1, p.p2, p.p3, p.p4, p.p5);
             });
         });
     });
 
     renderSportContent();
-    document.getElementById('global_import_file').addEventListener('change', importTool);
+    let fileInput = document.getElementById('global_import_file');
+    if (fileInput) fileInput.addEventListener('change', importTool);
 }
 
-function switchSport(s) { activeSport = s; initApp(); }
+function switchSport(s) { 
+    activeSport = s; 
+    scoutState = { events: [], countsHome: {}, countsAway: {}, impactHome: 50, impactAway: 50 };
+    initApp(); 
+}
 
 function calcNorm(val, mDef, target) {
     if (mDef.inv) {
@@ -311,7 +609,9 @@ function calcScore(s, m, p1, p2, p3, p4, p5) {
     let s3 = calcNorm(p3, conf.m3, t.t_p3);
     let s4 = calcNorm(p4, conf.m4, t.t_p4);
     let s5 = calcNorm(p5, conf.m5, t.t_p5);
-    return Math.round((s1 * 0.25) + (s2 * 0.25) + (s3 * 0.2) + (s4 * 0.15) + (s5 * 0.15)) || 0;
+    
+    // Replaced legacy linear math with Random Forest
+    return globalRF.predict(s1, s2, s3, s4, s5);
 }
 
 function renderSportContent() {
@@ -319,7 +619,7 @@ function renderSportContent() {
     let html = `
         <ul class="nav nav-tabs mode-tabs border-bottom-0 mt-2">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#mode-pro" style="border-color:${c.color}; border-bottom:none;">🏆 DRAFT/PREP</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mode-d1" style="border-color:#0dcaf0; border-bottom:none;">🎓 AMATEUR/D1</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mode-d1" style="border-color:#0dcaf0; border-bottom:none;">🎓 AMATEUR/D1/JUCO</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mode-minor" style="border-color:#20c997; border-bottom:none;">🛡️ MINORS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mode-proleague" style="border-color:#e83e8c; border-bottom:none;">⭐ PRO LEAGUE</button></li>
             <li class="nav-item"><button class="nav-link text-danger fw-bold" data-bs-toggle="tab" data-bs-target="#mode-live" style="border-color:#dc3545; border-bottom:none;">🔴 LIVE SCOUT</button></li>
@@ -332,11 +632,12 @@ function renderSportContent() {
             <div class="tab-pane fade" id="mode-live">${generateLiveHTML()}</div>
         </div>
     `;
-    document.getElementById('sport-content').innerHTML = html;
+    document.getElementById('main-content').innerHTML = html;
     
     setTimeout(() => {
         ['pro', 'd1', 'minor', 'proleague'].forEach(m => { updateProfile(m); renderDB(m); renderBoard(m); });
-        updateScoutHistoryDropdown(); updateLiveDashboard();
+        updateScoutHistoryDropdown(); 
+        updateLiveDashboard();
         fixPlotlyLayouts();
     }, 50);
 }
@@ -353,9 +654,19 @@ function generateModeHTML(mode) {
         `;
     }).join('');
 
+    let kineHtml = ['k1','k2','k3'].map(kKey => {
+        let kDef = c.kine[kKey];
+        return `
+            <div class="section-header text-info">${kDef.label}</div>
+            <div class="slider-label"><span>Measured:</span><span id="${px}_${kKey}_val" class="text-info">${kDef.min}${kDef.unit}</span></div>
+            <input type="range" class="form-range mb-2" id="${px}_${kKey}" min="${kDef.min}" max="${kDef.max}" step="${kDef.step}" value="${(kDef.min+kDef.max)/2}" oninput="updateProfile('${mode}')">
+        `;
+    }).join('');
+
     return `
         <ul class="nav nav-tabs sub-tabs mb-3">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#${px}_prof">📊 Profiler</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#${px}_kine">📐 Kinematics Bio</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#${px}_db">🔍 DB</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#${px}_board">📋 Board</button></li>
         </ul>
@@ -375,6 +686,19 @@ function generateModeHTML(mode) {
                             <div class="col-md-5"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">Overall Grade</div><div class="card-body p-0 chart-mobile-fix" id="${px}_gauge" style="height:320px;"></div></div></div>
                             <div class="col-md-7"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">5-Tool Radar</div><div class="card-body p-0 chart-mobile-fix" id="${px}_radar" style="height:320px;"></div></div></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="${px}_kine">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card border-info"><div class="card-body p-3">
+                            <h6 class="text-info fw-bold border-bottom border-info pb-1">Biomechanics Inputs</h6>
+                            ${kineHtml}
+                        </div></div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold text-info">Kinematic Translation Profile</div><div class="card-body p-0 chart-mobile-fix" id="${px}_kine_chart" style="height:300px;"></div></div>
                     </div>
                 </div>
             </div>
@@ -403,7 +727,7 @@ function generateLiveHTML() {
     `).join('');
 
     return `
-        <div class="card border-info mb-3"><div class="card-body p-2 d-flex flex-column flex-md-row gap-2 align-items-center">
+        <div class="card border-info mb-3 mt-3"><div class="card-body p-2 d-flex flex-column flex-md-row gap-2 align-items-center">
             <span class="input-group-text bg-dark text-light border-secondary w-100 w-md-auto fw-bold">📡 ESPN Sync</span>
             <select id="live_api_tier" class="form-select bg-dark text-white border-secondary" style="max-width: 200px;">${c.apiOpts}</select>
             <input type="text" id="live_espn_id" class="form-control bg-dark text-white border-secondary" placeholder="Game ID">
@@ -475,9 +799,6 @@ function generateLiveHTML() {
     `;
 }
 
-// ==========================================
-// 3. UI UPDATES & PROFILER LOGIC
-// ==========================================
 function updateProfile(m) {
     let px = `${activeSport}_${m}`; let c = SPORT_CONFIG[activeSport]; let t = c.tiers[m];
     
@@ -487,12 +808,18 @@ function updateProfile(m) {
     let p4 = parseFloat(document.getElementById(`${px}_p4`).value); document.getElementById(`${px}_p4_val`).innerText = p4 + c.m4.unit;
     let p5 = parseFloat(document.getElementById(`${px}_p5`).value); document.getElementById(`${px}_p5_val`).innerText = p5 + c.m5.unit;
     
+    let k1 = parseFloat(document.getElementById(`${px}_k1`).value); document.getElementById(`${px}_k1_val`).innerText = k1 + c.kine.k1.unit;
+    let k2 = parseFloat(document.getElementById(`${px}_k2`).value); document.getElementById(`${px}_k2_val`).innerText = k2 + c.kine.k2.unit;
+    let k3 = parseFloat(document.getElementById(`${px}_k3`).value); document.getElementById(`${px}_k3_val`).innerText = k3 + c.kine.k3.unit;
+
     let score = calcScore(activeSport, m, p1, p2, p3, p4, p5);
     Plotly.newPlot(`${px}_gauge`, [{ domain: {x:[0,1], y:[0,1]}, value: score, title: {text: "Grade", font:{color:'white'}}, type: "indicator", mode: "gauge+number", gauge: {axis: {range: [null, 100]}, bar: {color: c.color}} }], { autosize: true, paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:30, b:10, l:30, r:30} }, {displayModeBar: false, responsive: true});
     
     let r1 = calcNorm(p1, c.m1, t.t_p1), r2 = calcNorm(p2, c.m2, t.t_p2), r3 = calcNorm(p3, c.m3, t.t_p3), r4 = calcNorm(p4, c.m4, t.t_p4), r5 = calcNorm(p5, c.m5, t.t_p5);
-    
     Plotly.newPlot(`${px}_radar`, [{ type: 'scatterpolar', r: [r1, r2, r3, r4, r5, r1], theta: [c.m1.label, c.m2.label, c.m3.label, c.m4.label, c.m5.label, c.m1.label], fill: 'toself', line: {color: c.color} }], {autosize: true, polar: {radialaxis: {visible: true, range: [0, 100]}}, paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:20, b:20, l:20, r:20}}, {displayModeBar: false, responsive: true}); 
+
+    let kr1 = calcNorm(k1, c.kine.k1, c.kine.k1.max), kr2 = calcNorm(k2, c.kine.k2, c.kine.k2.max), kr3 = calcNorm(k3, c.kine.k3, c.kine.k3.max);
+    Plotly.newPlot(`${px}_kine_chart`, [{ type: 'bar', x: [c.kine.k1.label, c.kine.k2.label, c.kine.k3.label], y: [kr1, kr2, kr3], marker: {color: '#0dcaf0'} }], {autosize: true, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:20, b:40, l:40, r:20}, yaxis:{range:[0,100]}}, {displayModeBar: false, responsive: true});
 }
 
 function renderDB(m) {
@@ -512,6 +839,11 @@ function loadToProfile(m, id) {
     document.getElementById(`${px}_name`).value = p.name; document.getElementById(`${px}_level`).value = p.level;
     document.getElementById(`${px}_p1`).value = p.p1; document.getElementById(`${px}_p2`).value = p.p2;
     document.getElementById(`${px}_p3`).value = p.p3; document.getElementById(`${px}_p4`).value = p.p4; document.getElementById(`${px}_p5`).value = p.p5;
+    
+    if(p.k1 !== undefined) document.getElementById(`${px}_k1`).value = p.k1;
+    if(p.k2 !== undefined) document.getElementById(`${px}_k2`).value = p.k2;
+    if(p.k3 !== undefined) document.getElementById(`${px}_k3`).value = p.k3;
+
     updateProfile(m); new bootstrap.Tab(document.querySelector(`button[data-bs-target="#${px}_prof"]`)).show();
 }
 
@@ -535,9 +867,6 @@ function renderBoard(m) {
 }
 function remBoard(m, i) { let px = `${activeSport}_${m}`; let l = JSON.parse(localStorage.getItem(`omni_${px}_board`)); l.splice(i, 1); localStorage.setItem(`omni_${px}_board`, JSON.stringify(l)); renderBoard(m); }
 
-// ==========================================
-// 4. LIVE SCOUT PIPELINE & LOGIC
-// ==========================================
 window.streamToCloud = function(e) {
     let btn = e.target; let url = document.getElementById('live_webhook').value;
     if (!url) { alert("Please enter a valid Webhook URL."); return; }
@@ -575,7 +904,6 @@ window.syncLiveRosters = async function() {
 
         let hP = [], aP = [];
         if (data.boxscore && data.boxscore.players) {
-            // Index 0 = Away, Index 1 = Home
             aP = data.boxscore.players[0].statistics[0].athletes.map(a => a.athlete.displayName);
             hP = data.boxscore.players[1].statistics[0].athletes.map(a => a.athlete.displayName);
         } else if (data.rosters) {
@@ -595,8 +923,9 @@ window.syncLiveRosters = async function() {
 
 window.logScoutingEvent = function(action, pts, type, side) {
     let sl = scoutState; let shift = (type === 'success') ? 4 : (type === 'fail' ? -5 : 0.5);
-    
-    document.getElementById(`live_count_${side}_${action.replace(/\s+/g, '')}`).innerText = (parseInt(document.getElementById(`live_count_${side}_${action.replace(/\s+/g, '')}`).innerText) || 0) + 1;
+    let px = `live`;
+    let cntEl = document.getElementById(`${px}_cnt_${side}_${action.replace(/\s+/g, '')}`);
+    if(cntEl) cntEl.innerText = (parseInt(cntEl.innerText) || 0) + 1;
 
     if (side === 'home') {
         sl.countsHome[action] = (sl.countsHome[action] || 0) + 1;
@@ -644,8 +973,8 @@ window.loadPastScout = function() {
     document.getElementById(`live_team_a_name`).value = session.homeName; document.getElementById(`live_team_b_name`).value = session.awayName;
     document.getElementById(`live_score_a`).value = session.homeScore; document.getElementById(`live_score_b`).value = session.awayScore;
     SPORT_CONFIG[activeSport].acts.forEach(a => {
-        let hB = document.getElementById(`live_count_home_${a.n.replace(/\s+/g, '')}`); if(hB) hB.innerText = scoutState.countsHome[a.n] || 0;
-        let aB = document.getElementById(`live_count_away_${a.n.replace(/\s+/g, '')}`); if(aB) aB.innerText = scoutState.countsAway[a.n] || 0;
+        let hB = document.getElementById(`live_cnt_home_${a.n.replace(/\s+/g, '')}`); if(hB) hB.innerText = scoutState.countsHome[a.n] || 0;
+        let aB = document.getElementById(`live_cnt_away_${a.n.replace(/\s+/g, '')}`); if(aB) aB.innerText = scoutState.countsAway[a.n] || 0;
     });
     updateLiveDashboard();
 }
@@ -653,13 +982,6 @@ window.loadPastScout = function() {
 window.downloadScoutHistory = function() {
     let hist = JSON.parse(localStorage.getItem(`omni_scout_hist_${activeSport}`)) || [];
     let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hist)); a.download = `Omni_Scout_${activeSport}.json`; a.click();
-}
-
-window.uploadScoutHistory = function(e) {
-    let reader = new FileReader(); reader.onload = function(ev) {
-        let combined = (JSON.parse(localStorage.getItem(`omni_scout_hist_${activeSport}`)) || []).concat(JSON.parse(ev.target.result));
-        localStorage.setItem(`omni_scout_hist_${activeSport}`, JSON.stringify(combined)); updateScoutHistoryDropdown(); alert("✅ Loaded!");
-    }; reader.readAsText(e.target.files[0]); e.target.value = ""; 
 }
 
 function updateLiveDashboard() {
@@ -697,11 +1019,9 @@ function updateLiveDashboard() {
 }
 
 function fixPlotlyLayouts() { document.querySelectorAll('.js-plotly-plot').forEach(p => { if (p.offsetParent !== null) Plotly.relayout(p, {autosize: true}); }); }
-document.addEventListener('shown.bs.tab', () => setTimeout(fixPlotlyLayouts, 50)); window.addEventListener('resize', fixPlotlyLayouts);
+document.addEventListener('shown.bs.tab', () => setTimeout(fixPlotlyLayouts, 50)); 
+window.addEventListener('resize', fixPlotlyLayouts);
 
-// ==========================================
-// 5. GLOBAL EXPORT / IMPORT
-// ==========================================
 window.exportTool = function(format) {
     let fullState = { masterDB: masterDB, boards: {} };
     Object.keys(SPORT_CONFIG).forEach(s => { ['pro','d1','minor','proleague'].forEach(m => { fullState.boards[`${s}_${m}`] = JSON.parse(localStorage.getItem(`omni_${s}_${m}_board`)) || []; }); });
