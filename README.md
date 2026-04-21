@@ -16,6 +16,6 @@ This project utilizes a Hub-and-Spoke architecture with Firebase as the central 
 * **Data Science Exports:** Export dashboards natively to PDF, JSON, SAS `.sas` files, R scripts, and Python Pandas environments.
 
 ## 💻 Setup Instructions
-1. **Frontend:** Simply open `frontend_web/index.html` in any modern browser. No build step required.
+1. **Frontend:** Simply open `frontend_web/index.html` in any modern browser. No build step required. This Google Site Link works too [https://sites.google.com/view/mysticsglobalsportanalytics?usp=sharing](url)
 2. **Python:** Run `pip install -r backend_python/requirements.txt`, add your Firebase credentials, and run `python espn_live_sync.py`.
 3. **R Shiny:** Open `backend_r/app.R` in RStudio, install `shiny` and `httr`, and click "Run App".
