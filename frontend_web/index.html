@@ -61,13 +61,10 @@
             </div>
             <div class="modal-body p-4">
                 <p class="text-muted">The Mystics Omni-Engine does not use a simple weighted average. It uses a custom client-side <strong>Random Forest Regressor</strong> to evaluate prospects, simulating how a real scouting department analyzes non-linear data.</p>
-                
                 <h6 class="text-info fw-bold mt-4">1. Tier Normalization</h6>
                 <p class="small">Before any math occurs, the player's raw metrics are measured against the <strong>Target Baseline</strong> for their specific competitive tier (D1, Pro, Minors). This converts their raw data into a standardized 0-100 scale.</p>
-
                 <h6 class="text-warning fw-bold mt-4">2. The Random Forest Ensemble</h6>
                 <p class="small">The normalized stats are fed into an ensemble of <strong>50 distinct decision trees</strong>. Each tree looks at a random subset of the player's 5 tools (Feature Bagging) and sets random non-linear split thresholds to vote on the player's overall grade. The final Overall Grade is the aggregate average of all 50 trees.</p>
-
                 <h6 class="text-success fw-bold mt-4">3. Non-Linear Synergy & Bust Penalties</h6>
                 <p class="small mb-0">Unlike standard linear math, this model captures thresholds perfectly. If a player possesses elite primary traits that cross specific thresholds, the trees award a massive "Synergy Boost" recognizing superstar potential. Conversely, if a fundamental trait drops below a critical threshold, the trees apply a "Bust Penalty" that tanks their grade harder than linear subtraction would.</p>
             </div>
@@ -88,7 +85,6 @@
                     📂 Upload Omni JSON Database 
                     <input type="file" accept=".json" class="d-none" id="global_import_file">
                 </label>
-
                 <h6 class="text-info fw-bold border-bottom border-secondary pb-2 mt-3">📤 Export Omni-Database</h6>
                 <button class="btn btn-outline-info text-start fw-bold py-2" onclick="exportTool('json')">💾 Download JSON DB</button>
                 <button class="btn btn-outline-warning text-start fw-bold" onclick="exportTool('py')">🐍 Export Python Pandas Script</button>
@@ -288,137 +284,182 @@ const SPORT_CONFIG = {
     }
 };
 
+// ==========================================
+// RESTORED FULL DATABASE
+// ==========================================
 let masterDB = {};
 Object.keys(SPORT_CONFIG).forEach(s => {
     masterDB[s] = { 'pro': [], 'd1': [], 'minor': [], 'proleague': [] };
 });
 
-// ==========================================
-// ⛳ GOLF (glf)
-// ==========================================
+// Golf (glf)
 masterDB['glf']['pro'] = [
     {id:701, name:"Miles Russell", school:"AJGA", level:"Junior", p1:290, p2:62, p3:65, p4:58, p5:1.5, k1:115, k2:1.48, k3:95},
-    {id:702, name:"Blades Brown", school:"AJGA", level:"Junior", p1:295, p2:58, p3:62, p4:55, p5:1.2, k1:118, k2:1.49, k3:100}
+    {id:702, name:"Blades Brown", school:"AJGA", level:"Junior", p1:295, p2:58, p3:62, p4:55, p5:1.2, k1:118, k2:1.49, k3:100},
+    {id:703, name:"Jackson Byrd", school:"AJGA", level:"Junior", p1:288, p2:60, p3:64, p4:59, p5:1.3, k1:116, k2:1.47, k3:98},
+    {id:704, name:"Luke Clanton", school:"Amateur", level:"Amateur", p1:298, p2:55, p3:60, p4:54, p5:1.1, k1:119, k2:1.50, k3:102}
 ];
 masterDB['glf']['d1'] = [
     {id:711, name:"Jackson Koivun", school:"Auburn", level:"NCAA D1", p1:305, p2:60, p3:68, p4:62, p5:2.1, k1:120, k2:1.50, k3:105},
-    {id:712, name:"Gordon Sargent", school:"Vanderbilt", level:"NCAA D1", p1:315, p2:55, p3:66, p4:58, p5:1.9, k1:126, k2:1.50, k3:110}
+    {id:712, name:"Gordon Sargent", school:"Vanderbilt", level:"NCAA D1", p1:315, p2:55, p3:66, p4:58, p5:1.9, k1:126, k2:1.50, k3:110},
+    {id:713, name:"Michael Thorbjornsen", school:"Stanford", level:"NCAA D1", p1:308, p2:58, p3:67, p4:61, p5:2.0, k1:122, k2:1.49, k3:108},
+    {id:714, name:"Christo Lamprecht", school:"Texas Tech", level:"NCAA D1", p1:320, p2:52, p3:64, p4:56, p5:1.8, k1:128, k2:1.51, k3:112},
+    {id:716, name:"Nick Dunlap", school:"Alabama", level:"NCAA D1", p1:302, p2:59, p3:65, p4:60, p5:1.9, k1:121, k2:1.48, k3:104}
 ];
 masterDB['glf']['minor'] = [
-    {id:715, name:"Alden Allie", school:"Korn Ferry", level:"Korn Ferry", p1:308, p2:61, p3:67, p4:60, p5:1.6, k1:121, k2:1.49, k3:98}
+    {id:715, name:"Alden Allie", school:"Korn Ferry", level:"Korn Ferry", p1:308, p2:61, p3:67, p4:60, p5:1.6, k1:121, k2:1.49, k3:98},
+    {id:717, name:"Pierceson Coody", school:"Korn Ferry", level:"Korn Ferry", p1:305, p2:60, p3:68, p4:59, p5:1.7, k1:120, k2:1.50, k3:100},
+    {id:718, name:"Adrien Dumont de Chassart", school:"Korn Ferry", level:"Korn Ferry", p1:298, p2:65, p3:70, p4:62, p5:1.5, k1:116, k2:1.48, k3:96}
 ];
 masterDB['glf']['proleague'] = [
     {id:721, name:"Scottie Scheffler", school:"PGA Tour", level:"PGA Tour", p1:302, p2:68, p3:74, p4:66, p5:2.8, k1:119, k2:1.50, k3:102},
     {id:722, name:"Rory McIlroy", school:"PGA Tour", level:"PGA Tour", p1:318, p2:58, p3:69, p4:59, p5:2.4, k1:125, k2:1.51, k3:115},
     {id:723, name:"Xander Schauffele", school:"PGA Tour", level:"PGA Tour", p1:305, p2:64, p3:71, p4:65, p5:2.5, k1:118, k2:1.50, k3:100},
     {id:724, name:"Nelly Korda", school:"LPGA", level:"LPGA", p1:275, p2:72, p3:75, p4:64, p5:2.6, k1:105, k2:1.50, k3:85},
-    {id:725, name:"Bryson DeChambeau", school:"LIV Golf", level:"LIV", p1:325, p2:55, p3:68, p4:60, p5:2.2, k1:132, k2:1.50, k3:120}
+    {id:725, name:"Bryson DeChambeau", school:"LIV Golf", level:"LIV", p1:325, p2:55, p3:68, p4:60, p5:2.2, k1:132, k2:1.50, k3:120},
+    {id:726, name:"Jon Rahm", school:"LIV Golf", level:"LIV", p1:312, p2:62, p3:72, p4:63, p5:2.3, k1:121, k2:1.50, k3:105},
+    {id:727, name:"Collin Morikawa", school:"PGA Tour", level:"PGA Tour", p1:295, p2:75, p3:76, p4:68, p5:2.1, k1:114, k2:1.49, k3:95},
+    {id:728, name:"Ludvig Aberg", school:"PGA Tour", level:"PGA Tour", p1:315, p2:65, p3:73, p4:62, p5:2.4, k1:123, k2:1.51, k3:108},
+    {id:729, name:"Viktor Hovland", school:"PGA Tour", level:"PGA Tour", p1:308, p2:64, p3:72, p4:58, p5:2.2, k1:120, k2:1.50, k3:100},
+    {id:730, name:"Wyndham Clark", school:"PGA Tour", level:"PGA Tour", p1:314, p2:59, p3:68, p4:61, p5:1.9, k1:124, k2:1.50, k3:110}
 ];
 
-// ==========================================
-// 🏒 HOCKEY (ihk)
-// ==========================================
+// Hockey (ihk)
 masterDB['ihk']['pro'] = [
     {id:401, name:"Gavin McKenna", school:"Medicine Hat", level:"Draft Prep", p1:23.4, p2:70, p3:62, p4:7.5, p5:1.5, k1:4.8, k2:0.42, k3:58},
     {id:402, name:"Michael Misa", school:"Saginaw", level:"Draft Prep", p1:23.1, p2:68, p3:60, p4:6.8, p5:1.8, k1:4.6, k2:0.45, k3:55},
     {id:403, name:"Anton Frondell", school:"Djurgardens", level:"Intl", p1:22.5, p2:69, p3:58, p4:6.2, p5:2.1, k1:4.5, k2:0.48, k3:52},
     {id:404, name:"Porter Martone", school:"Brampton", level:"Draft Prep", p1:22.2, p2:72, p3:59, p4:7.1, p5:2.5, k1:4.7, k2:0.40, k3:60},
-    {id:405, name:"Ivan Ryabkin", school:"Dynamo MHL", level:"Intl", p1:22.6, p2:71, p3:57, p4:6.5, p5:1.2, k1:4.4, k2:0.44, k3:54}
+    {id:405, name:"Ivan Ryabkin", school:"Dynamo MHL", level:"Intl", p1:22.6, p2:71, p3:57, p4:6.5, p5:1.2, k1:4.4, k2:0.44, k3:54},
+    {id:406, name:"Roger McQueen", school:"Kelowna", level:"Draft Prep", p1:22.0, p2:66, p3:55, p4:6.0, p5:1.4, k1:4.5, k2:0.45, k3:55},
+    {id:407, name:"Matthew Schaefer", school:"Erie", level:"Draft Prep", p1:22.8, p2:65, p3:56, p4:5.8, p5:2.8, k1:4.6, k2:0.46, k3:53}
 ];
 masterDB['ihk']['d1'] = [
     {id:411, name:"James Hagens", school:"Boston College", level:"NCAA", p1:22.6, p2:65, p3:63, p4:8.0, p5:1.5, k1:4.5, k2:0.48, k3:52},
     {id:412, name:"Gabe Perreault", school:"Boston College", level:"NCAA", p1:21.8, p2:66, p3:64, p4:7.5, p5:1.8, k1:4.3, k2:0.44, k3:50},
     {id:413, name:"Zayne Parekh", school:"Saginaw", level:"CHL", p1:22.8, p2:68, p3:60, p4:6.5, p5:3.1, k1:4.8, k2:0.45, k3:53},
     {id:414, name:"Zeev Buium", school:"Denver", level:"NCAA", p1:22.5, p2:64, p3:62, p4:5.2, p5:3.8, k1:4.7, k2:0.52, k3:49},
-    {id:415, name:"Berkly Catton", school:"Spokane", level:"CHL", p1:23.2, p2:67, p3:59, p4:7.2, p5:1.9, k1:4.6, k2:0.41, k3:55}
+    {id:415, name:"Berkly Catton", school:"Spokane", level:"CHL", p1:23.2, p2:67, p3:59, p4:7.2, p5:1.9, k1:4.6, k2:0.41, k3:55},
+    {id:416, name:"Macklin Celebrini", school:"Boston Univ", level:"NCAA", p1:23.5, p2:72, p3:65, p4:8.5, p5:2.2, k1:4.8, k2:0.38, k3:58},
+    {id:417, name:"Ivan Demidov", school:"SKA St. Petersburg", level:"Junior A", p1:23.0, p2:70, p3:61, p4:7.8, p5:1.6, k1:4.5, k2:0.40, k3:60}
 ];
 masterDB['ihk']['minor'] = [
     {id:430, name:"Isaac Howard", school:"Bakersfield Condors", level:"AHL", p1:23.5, p2:68, p3:56.5, p4:6.8, p5:1.5, k1:4.6, k2:0.40, k3:56},
     {id:431, name:"Mavrik Bourque", school:"Texas Stars", level:"AHL", p1:22.5, p2:68, p3:58, p4:6.5, p5:2.1, k1:4.6, k2:0.42, k3:54},
     {id:432, name:"Jiri Kulich", school:"Rochester", level:"AHL", p1:22.8, p2:72, p3:56, p4:6.2, p5:1.5, k1:4.7, k2:0.35, k3:58},
     {id:433, name:"Brad Lambert", school:"Manitoba", level:"AHL", p1:23.2, p2:65, p3:54, p4:6.0, p5:1.2, k1:4.9, k2:0.44, k3:50},
-    {id:434, name:"Shane Wright", school:"Coachella Valley", level:"AHL", p1:22.4, p2:70, p3:59, p4:5.8, p5:2.8, k1:4.5, k2:0.39, k3:53}
+    {id:434, name:"Shane Wright", school:"Coachella Valley", level:"AHL", p1:22.4, p2:70, p3:59, p4:5.8, p5:2.8, k1:4.5, k2:0.39, k3:53},
+    {id:435, name:"Logan Stankoven", school:"Texas Stars", level:"AHL", p1:22.7, p2:69, p3:57, p4:6.6, p5:1.8, k1:4.4, k2:0.38, k3:55}
 ];
 masterDB['ihk']['proleague'] = [
     {id:451, name:"Connor McDavid", school:"Oilers", level:"NHL", p1:24.8, p2:72, p3:64, p4:9.5, p5:2.5, k1:5.9, k2:0.35, k3:65},
     {id:452, name:"Nathan MacKinnon", school:"Avalanche", level:"NHL", p1:24.5, p2:78, p3:65, p4:9.2, p5:2.8, k1:5.6, k2:0.38, k3:63},
     {id:453, name:"Auston Matthews", school:"Maple Leafs", level:"NHL", p1:23.1, p2:80, p3:62, p4:8.8, p5:3.5, k1:5.2, k2:0.25, k3:68},
     {id:454, name:"Connor Bedard", school:"Blackhawks", level:"NHL", p1:22.8, p2:77, p3:55, p4:8.0, p5:1.2, k1:4.8, k2:0.22, k3:70},
-    {id:455, name:"Cale Makar", school:"Avalanche", level:"NHL", p1:24.1, p2:73, p3:63, p4:6.5, p5:4.8, k1:5.4, k2:0.40, k3:66}
+    {id:455, name:"Cale Makar", school:"Avalanche", level:"NHL", p1:24.1, p2:73, p3:63, p4:6.5, p5:4.8, k1:5.4, k2:0.40, k3:66},
+    {id:456, name:"Nikita Kucherov", school:"Lightning", level:"NHL", p1:22.5, p2:76, p3:66, p4:8.5, p5:2.0, k1:5.0, k2:0.36, k3:62},
+    {id:457, name:"Quinn Hughes", school:"Canucks", level:"NHL", p1:24.2, p2:68, p3:65, p4:7.0, p5:4.2, k1:5.5, k2:0.42, k3:60},
+    {id:458, name:"Artemi Panarin", school:"Rangers", level:"NHL", p1:23.0, p2:74, p3:64, p4:8.2, p5:1.8, k1:5.1, k2:0.39, k3:58},
+    {id:459, name:"David Pastrnak", school:"Bruins", level:"NHL", p1:23.3, p2:79, p3:61, p4:8.4, p5:2.2, k1:5.2, k2:0.32, k3:64},
+    {id:460, name:"Leon Draisaitl", school:"Oilers", level:"NHL", p1:22.9, p2:78, p3:63, p4:8.6, p5:2.1, k1:5.0, k2:0.34, k3:61}
 ];
 
-// ==========================================
-// 🏀 BASKETBALL (bkb)
-// ==========================================
+// Basketball (bkb)
 masterDB['bkb']['pro'] = [ 
     {id:11, name:"AJ Dybantsa", school:"Utah Prep", level:"Prep", p1:64, p2:38, p3:2.1, p4:12, p5:2.5, k1:41.5, k2:0.62, k3:5}, 
     {id:12, name:"Cameron Boozer", school:"Columbus HS", level:"Prep", p1:66, p2:35, p3:2.8, p4:18, p5:3.2, k1:38, k2:0.75, k3:4},
     {id:13, name:"Darryn Peterson", school:"Huntington Prep", level:"Prep", p1:62, p2:39, p3:2.5, p4:10, p5:2.0, k1:39, k2:0.60, k3:6},
-    {id:14, name:"Hugo Yanez", school:"Real Madrid", level:"Intl", p1:65, p2:41, p3:3.5, p4:8, p5:1.5, k1:34, k2:0.55, k3:2}
+    {id:14, name:"Hugo Yanez", school:"Real Madrid", level:"Intl", p1:65, p2:41, p3:3.5, p4:8, p5:1.5, k1:34, k2:0.55, k3:2},
+    {id:15, name:"Koa Peat", school:"Perry HS", level:"Prep", p1:61, p2:32, p3:2.2, p4:15, p5:3.0, k1:37, k2:0.70, k3:5},
+    {id:16, name:"Jalen Haralson", school:"La Lumiere", level:"Prep", p1:60, p2:36, p3:3.1, p4:9, p5:2.2, k1:40, k2:0.65, k3:4},
+    {id:17, name:"Caleb Wilson", school:"Holy Innocents", level:"Prep", p1:59, p2:34, p3:2.4, p4:14, p5:3.5, k1:39, k2:0.68, k3:6}
 ];
 masterDB['bkb']['d1'] = [ 
     {id:60, name:"Cooper Flagg", school:"Duke", level:"D1 Power", p1:62, p2:36, p3:2.8, p4:16, p5:5.5, k1:39, k2:0.65, k3:6},
     {id:61, name:"Ajay Mitchell", school:"UCSB", level:"Mid-Major", p1:58.5, p2:39, p3:3.2, p4:9, p5:1.2, k1:36, k2:0.68, k3:2}, 
     {id:62, name:"Josh Pierre-Louis", school:"UCSB", level:"Mid-Major", p1:55.0, p2:32, p3:2.5, p4:11, p5:2.4, k1:43, k2:0.72, k3:5}, 
     {id:63, name:"Ace Bailey", school:"Rutgers", level:"D1 Power", p1:61.5, p2:37, p3:2.1, p4:14, p5:2.8, k1:42, k2:0.58, k3:6}, 
-    {id:64, name:"Dylan Harper", school:"Rutgers", level:"D1 Power", p1:59.0, p2:36, p3:3.8, p4:10, p5:1.8, k1:38, k2:0.65, k3:4}
+    {id:64, name:"Dylan Harper", school:"Rutgers", level:"D1 Power", p1:59.0, p2:36, p3:3.8, p4:10, p5:1.8, k1:38, k2:0.65, k3:4},
+    {id:65, name:"VJ Edgecombe", school:"Baylor", level:"D1 Power", p1:60.5, p2:35, p3:2.2, p4:11, p5:3.0, k1:44, k2:0.62, k3:5},
+    {id:66, name:"Khaman Maluach", school:"Duke", level:"D1 Power", p1:63.0, p2:28, p3:1.1, p4:22, p5:6.0, k1:35, k2:0.80, k3:8},
+    {id:67, name:"Nolan Traore", school:"Saint-Quentin", level:"Intl", p1:58.0, p2:34, p3:4.5, p4:8, p5:1.5, k1:38, k2:0.64, k3:3}
 ];
 masterDB['bkb']['minor'] = [ 
     {id:131, name:"Mac McClung", school:"Osceola Magic", level:"G-League", p1:61.5, p2:38, p3:3.0, p4:8, p5:0.5, k1:44, k2:0.65, k3:0},
     {id:132, name:"Oscar Tshiebwe", school:"Indiana Mad Ants", level:"G-League", p1:64.0, p2:20, p3:1.2, p4:25, p5:1.5, k1:35, k2:0.80, k3:8},
-    {id:133, name:"Adam Flagler", school:"OKC Blue", level:"G-League", p1:60.0, p2:40, p3:3.5, p4:7, p5:0.8, k1:36, k2:0.58, k3:1}
+    {id:133, name:"Adam Flagler", school:"OKC Blue", level:"G-League", p1:60.0, p2:40, p3:3.5, p4:7, p5:0.8, k1:36, k2:0.58, k3:1},
+    {id:134, name:"Isaiah Wong", school:"Salt Lake City Stars", level:"G-League", p1:59.5, p2:37, p3:2.8, p4:9, p5:1.0, k1:39, k2:0.62, k3:2},
+    {id:135, name:"Emoni Bates", school:"Cleveland Charge", level:"G-League", p1:57.0, p2:39, p3:1.5, p4:10, p5:0.6, k1:38, k2:0.60, k3:3}
 ];
 masterDB['bkb']['proleague'] = [ 
     {id:141, name:"Nikola Jokic", school:"Nuggets", level:"NBA", p1:68, p2:35, p3:4.8, p4:20, p5:3.5, k1:28, k2:0.85, k3:7}, 
     {id:142, name:"Anthony Edwards", school:"Timberwolves", level:"NBA", p1:61, p2:38, p3:2.5, p4:10, p5:2.0, k1:43, k2:0.60, k3:4},
     {id:143, name:"Victor Wembanyama", school:"Spurs", level:"NBA", p1:60, p2:34, p3:2.2, p4:18, p5:6.5, k1:36, k2:0.65, k3:9},
     {id:144, name:"Shai Gilgeous-Alexander", school:"Thunder", level:"NBA", p1:63, p2:37, p3:3.5, p4:11, p5:3.0, k1:38, k2:0.62, k3:6},
-    {id:145, name:"Luka Doncic", school:"Mavericks", level:"NBA", p1:62, p2:38, p3:4.5, p4:15, p5:1.5, k1:32, k2:0.70, k3:3}
+    {id:145, name:"Luka Doncic", school:"Mavericks", level:"NBA", p1:62, p2:38, p3:4.5, p4:15, p5:1.5, k1:32, k2:0.70, k3:3},
+    {id:146, name:"Giannis Antetokounmpo", school:"Bucks", level:"NBA", p1:64, p2:28, p3:3.0, p4:18, p5:4.5, k1:40, k2:0.75, k3:8},
+    {id:147, name:"Jayson Tatum", school:"Celtics", level:"NBA", p1:61, p2:37, p3:2.8, p4:14, p5:2.5, k1:38, k2:0.64, k3:5},
+    {id:148, name:"Stephen Curry", school:"Warriors", level:"NBA", p1:65, p2:42, p3:3.2, p4:8, p5:1.0, k1:34, k2:0.45, k3:1},
+    {id:149, name:"LeBron James", school:"Lakers", level:"NBA", p1:62, p2:36, p3:4.0, p4:13, p5:2.0, k1:39, k2:0.68, k3:6},
+    {id:150, name:"Kevin Durant", school:"Suns", level:"NBA", p1:63, p2:40, p3:2.5, p4:12, p5:2.2, k1:36, k2:0.60, k3:7},
+    {id:151, name:"Joel Embiid", school:"76ers", level:"NBA", p1:64, p2:35, p3:2.2, p4:19, p5:4.0, k1:32, k2:0.72, k3:6},
+    {id:152, name:"Devin Booker", school:"Suns", level:"NBA", p1:60, p2:38, p3:3.0, p4:9, p5:1.2, k1:37, k2:0.62, k3:2}
 ];
 
-// ==========================================
-// ⚾ BASEBALL (bsb)
-// ==========================================
+// Baseball (bsb)
 masterDB['bsb']['pro'] = [ 
     {id:1, name:"Ethan Holliday", school:"Stillwater HS", level:"Prep", p1:109, p2:15, p3:14, p4:22, p5:28, k1:45, k2:6.8, k3:18}, 
     {id:2, name:"Trent Caraway", school:"Oregon St", level:"College Draft", p1:111, p2:18, p3:12, p4:25, p5:27, k1:50, k2:6.5, k3:15},
     {id:3, name:"Cam Caminiti", school:"Saguaro HS", level:"Prep", p1:105, p2:12, p3:8, p4:20, p5:29, k1:75, k2:7.1, k3:10},
-    {id:4, name:"Bryce Rainer", school:"Harvard-Westlake", level:"Prep", p1:104, p2:18, p3:11, p4:24, p5:28.5, k1:55, k2:6.6, k3:14}
+    {id:4, name:"Bryce Rainer", school:"Harvard-Westlake", level:"Prep", p1:104, p2:18, p3:11, p4:24, p5:28.5, k1:55, k2:6.6, k3:14},
+    {id:5, name:"Konnor Griffin", school:"Jackson Prep", level:"Prep", p1:107, p2:20, p3:13, p4:26, p5:29.5, k1:60, k2:6.4, k3:16}
 ];
 masterDB['bsb']['d1'] = [ 
     {id:51, name:"Zander Darby", school:"UCSB", level:"Mid-Major", p1:104, p2:15, p3:10, p4:25, p5:27.5, k1:55, k2:6.4, k3:12}, 
     {id:52, name:"Matt Ager", school:"UCSB", level:"Mid-Major", p1:98, p2:20, p3:5, p4:30, p5:25, k1:80, k2:6.8, k3:5},
     {id:53, name:"Jace LaViolette", school:"Texas A&M", level:"D1 Power", p1:112, p2:19, p3:15, p4:28, p5:28, k1:60, k2:7.1, k3:20}, 
     {id:54, name:"Charlie Condon", school:"Georgia", level:"D1 Power", p1:114, p2:16, p3:18, p4:22, p5:26.5, k1:58, k2:6.9, k3:18},
-    {id:55, name:"Travis Bazzana", school:"Oregon St", level:"D1 Power", p1:106, p2:14, p3:12, p4:18, p5:29.5, k1:45, k2:6.2, k3:15}
+    {id:55, name:"Travis Bazzana", school:"Oregon St", level:"D1 Power", p1:106, p2:14, p3:12, p4:18, p5:29.5, k1:45, k2:6.2, k3:15},
+    {id:56, name:"Jac Caglianone", school:"Florida", level:"D1 Power", p1:117, p2:22, p3:16, p4:30, p5:26.0, k1:65, k2:7.2, k3:22},
+    {id:57, name:"Braden Montgomery", school:"Texas A&M", level:"D1 Power", p1:110, p2:18, p3:14, p4:25, p5:28.5, k1:55, k2:6.7, k3:17}
 ];
 masterDB['bsb']['minor'] = [ 
     {id:301, name:"Jackson Holliday", school:"Norfolk Tides", level:"AAA", p1:110, p2:18, p3:11, p4:20, p5:29, k1:48, k2:6.6, k3:16}, 
     {id:302, name:"Roman Anthony", school:"Bowie Baysox", level:"AA", p1:108, p2:22, p3:14, p4:24, p5:27.5, k1:55, k2:6.7, k3:19},
     {id:303, name:"Marcelo Mayer", school:"Portland Sea Dogs", level:"AA", p1:106, p2:20, p3:10, p4:25, p5:28, k1:50, k2:6.5, k3:14},
-    {id:304, name:"Dylan Crews", school:"Rochester Red Wings", level:"AAA", p1:111, p2:17, p3:13, p4:22, p5:29.5, k1:52, k2:6.4, k3:15}
+    {id:304, name:"Dylan Crews", school:"Rochester Red Wings", level:"AAA", p1:111, p2:17, p3:13, p4:22, p5:29.5, k1:52, k2:6.4, k3:15},
+    {id:305, name:"Jackson Chourio", school:"Nashville Sounds", level:"AAA", p1:109, p2:21, p3:12, p4:26, p5:30.0, k1:45, k2:6.3, k3:14},
+    {id:306, name:"James Wood", school:"Rochester Red Wings", level:"AAA", p1:115, p2:25, p3:16, p4:28, p5:28.0, k1:62, k2:7.0, k3:20}
 ];
 masterDB['bsb']['proleague'] = [ 
     {id:401, name:"Aaron Judge", school:"Yankees", level:"MLB", p1:118, p2:28, p3:22, p4:24, p5:27, k1:65, k2:7.2, k3:22}, 
     {id:402, name:"Shohei Ohtani", school:"Dodgers", level:"MLB", p1:115, p2:22, p3:19, p4:26, p5:29.5, k1:75, k2:7.5, k3:18},
     {id:403, name:"Bobby Witt Jr.", school:"Royals", level:"MLB", p1:112, p2:16, p3:15, p4:28, p5:30.5, k1:50, k2:6.4, k3:14},
     {id:404, name:"Gunnar Henderson", school:"Orioles", level:"MLB", p1:114, p2:21, p3:16, p4:25, p5:28.8, k1:55, k2:6.6, k3:16},
-    {id:405, name:"Paul Skenes", school:"Pirates", level:"MLB", p1:102, p2:35, p3:4, p4:30, p5:26, k1:85, k2:7.4, k3:8}
+    {id:405, name:"Paul Skenes", school:"Pirates", level:"MLB", p1:102, p2:35, p3:4, p4:30, p5:26, k1:85, k2:7.4, k3:8},
+    {id:406, name:"Juan Soto", school:"Yankees", level:"MLB", p1:112, p2:15, p3:16, p4:18, p5:26.5, k1:52, k2:6.5, k3:17},
+    {id:407, name:"Ronald Acuna Jr.", school:"Braves", level:"MLB", p1:116, p2:18, p3:17, p4:22, p5:29.8, k1:58, k2:6.8, k3:15},
+    {id:408, name:"Mookie Betts", school:"Dodgers", level:"MLB", p1:108, p2:14, p3:13, p4:20, p5:28.0, k1:48, k2:6.2, k3:19},
+    {id:409, name:"Bryce Harper", school:"Phillies", level:"MLB", p1:113, p2:22, p3:15, p4:24, p5:27.5, k1:60, k2:6.9, k3:16},
+    {id:410, name:"Gerrit Cole", school:"Yankees", level:"MLB", p1:98, p2:32, p3:6, p4:28, p5:25, k1:82, k2:7.1, k3:6}
 ];
 
-// ==========================================
-// 🏈 FOOTBALL (cfb)
-// ==========================================
+// Football (cfb)
 masterDB['cfb']['pro'] = [ 
     {id:201, name:"Julian Lewis", school:"Carrollton HS", level:"Draft Prep", p1:4.65, p2:88, p3:90, p4:85, p5:92, k1:32, k2:115, k3:7.1},
     {id:202, name:"Bryce Underwood", school:"Belleville HS", level:"Draft Prep", p1:4.55, p2:92, p3:88, p4:90, p5:85, k1:35, k2:120, k3:6.9},
-    {id:203, name:"DJ Lagway", school:"Florida", level:"Draft Prep", p1:4.60, p2:90, p3:85, p4:92, p5:88, k1:33, k2:118, k3:7.0}
+    {id:203, name:"DJ Lagway", school:"Florida", level:"Draft Prep", p1:4.60, p2:90, p3:85, p4:92, p5:88, k1:33, k2:118, k3:7.0},
+    {id:204, name:"George MacIntyre", school:"Brentwood", level:"Draft Prep", p1:4.70, p2:85, p3:88, p4:86, p5:91, k1:30, k2:112, k3:7.2},
+    {id:205, name:"Dakien Brooks", school:"Texas HS", level:"Draft Prep", p1:4.42, p2:94, p3:85, p4:88, p5:82, k1:38, k2:126, k3:6.8}
 ];
 masterDB['cfb']['d1'] = [ 
     {id:211, name:"Jalen Milroe", school:"Alabama", level:"FBS", p1:4.45, p2:94, p3:88, p4:92, p5:84, k1:36, k2:125, k3:6.9}, 
     {id:212, name:"Arch Manning", school:"Texas", level:"FBS", p1:4.65, p2:86, p3:82, p4:88, p5:90, k1:31, k2:116, k3:7.2},
     {id:213, name:"Ryan Williams", school:"Alabama", level:"FBS", p1:4.32, p2:97, p3:95, p4:90, p5:85, k1:40, k2:132, k3:6.6},
-    {id:214, name:"Travis Hunter", school:"Colorado", level:"FBS", p1:4.42, p2:95, p3:98, p4:92, p5:95, k1:38, k2:128, k3:6.7}
+    {id:214, name:"Travis Hunter", school:"Colorado", level:"FBS", p1:4.42, p2:95, p3:98, p4:92, p5:95, k1:38, k2:128, k3:6.7},
+    {id:218, name:"Carson Beck", school:"Georgia", level:"FBS", p1:4.85, p2:80, p3:92, p4:88, p5:94, k1:29, k2:110, k3:7.3},
+    {id:219, name:"Quinn Ewers", school:"Texas", level:"FBS", p1:4.75, p2:82, p3:90, p4:86, p5:92, k1:30, k2:112, k3:7.2},
+    {id:220, name:"Luther Burden III", school:"Missouri", level:"FBS", p1:4.38, p2:96, p3:94, p4:90, p5:88, k1:39, k2:128, k3:6.7}
 ];
 masterDB['cfb']['minor'] = [ 
     {id:215, name:"AJ McCarron", school:"Battlehawks", level:"UFL", p1:4.9, p2:80, p3:85, p4:75, p5:90, k1:28, k2:105, k3:7.4},
@@ -430,16 +471,21 @@ masterDB['cfb']['proleague'] = [
     {id:222, name:"Lamar Jackson", school:"Ravens", level:"NFL", p1:4.35, p2:99, p3:96, p4:95, p5:92, k1:36, k2:128, k3:6.8},
     {id:223, name:"CJ Stroud", school:"Texans", level:"NFL", p1:4.7, p2:95, p3:94, p4:92, p5:96, k1:32, k2:116, k3:7.1},
     {id:224, name:"Justin Jefferson", school:"Vikings", level:"NFL", p1:4.43, p2:98, p3:99, p4:96, p5:94, k1:38, k2:126, k3:6.7},
-    {id:225, name:"Christian McCaffrey", school:"49ers", level:"NFL", p1:4.48, p2:97, p3:98, p4:94, p5:96, k1:37, k2:122, k3:6.6}
+    {id:225, name:"Christian McCaffrey", school:"49ers", level:"NFL", p1:4.48, p2:97, p3:98, p4:94, p5:96, k1:37, k2:122, k3:6.6},
+    {id:226, name:"Josh Allen", school:"Bills", level:"NFL", p1:4.75, p2:96, p3:95, p4:98, p5:92, k1:33, k2:118, k3:7.0},
+    {id:227, name:"Joe Burrow", school:"Bengals", level:"NFL", p1:4.8, p2:92, p3:95, p4:90, p5:97, k1:29, k2:112, k3:7.2},
+    {id:228, name:"Ja'Marr Chase", school:"Bengals", level:"NFL", p1:4.38, p2:97, p3:96, p4:95, p5:90, k1:39, k2:130, k3:6.6},
+    {id:229, name:"Micah Parsons", school:"Cowboys", level:"NFL", p1:4.39, p2:99, p3:94, p4:99, p5:88, k1:38, k2:128, k3:6.8},
+    {id:230, name:"Tyreek Hill", school:"Dolphins", level:"NFL", p1:4.29, p2:99, p3:97, p4:92, p5:86, k1:40, k2:126, k3:6.5}
 ];
 
-// ==========================================
-// ⚽ SOCCER (soc)
-// ==========================================
+// Soccer (soc)
 masterDB['soc']['pro'] = [ 
     {id:301, name:"Cavan Sullivan", school:"Philly Academy", level:"Academy", p1:21.5, p2:82, p3:80, p4:8.5, p5:1.2, k1:21.0, k2:950, k3:3.8},
     {id:302, name:"Francesco Camarda", school:"AC Milan U19", level:"Academy", p1:20.8, p2:85, p3:75, p4:6.0, p5:1.0, k1:20.5, k2:1020, k3:3.5},
-    {id:303, name:"Ethan Nwaneri", school:"Arsenal U21", level:"Academy", p1:22.0, p2:84, p3:82, p4:9.0, p5:1.5, k1:21.8, k2:980, k3:3.9}
+    {id:303, name:"Ethan Nwaneri", school:"Arsenal U21", level:"Academy", p1:22.0, p2:84, p3:82, p4:9.0, p5:1.5, k1:21.8, k2:980, k3:3.9},
+    {id:304, name:"Endrick", school:"Palmeiras/Madrid", level:"Intl U20", p1:22.8, p2:88, p3:78, p4:10.0, p5:1.0, k1:22.5, k2:1150, k3:4.0},
+    {id:305, name:"Lamine Yamal", school:"Barcelona", level:"Intl U20", p1:22.5, p2:90, p3:85, p4:12.5, p5:1.2, k1:22.0, k2:990, k3:4.1}
 ];
 masterDB['soc']['d1'] = [ 
     {id:311, name:"Ousmane Sylla", school:"Clemson", level:"NCAA D1", p1:22.0, p2:84, p3:78, p4:7.5, p5:1.8, k1:21.8, k2:1050, k3:3.9},
@@ -454,12 +500,15 @@ masterDB['soc']['proleague'] = [
     {id:322, name:"Kevin De Bruyne", school:"Man City", level:"Top 5 Europe", p1:20.5, p2:96, p3:90, p4:10.5, p5:1.5, k1:20.0, k2:1350, k3:3.5},
     {id:323, name:"Kylian Mbappe", school:"Real Madrid", level:"Top 5 Europe", p1:23.5, p2:95, p3:84, p4:14.0, p5:0.5, k1:23.2, k2:1250, k3:4.4},
     {id:324, name:"Jude Bellingham", school:"Real Madrid", level:"Top 5 Europe", p1:21.8, p2:94, p3:88, p4:11.0, p5:2.5, k1:21.2, k2:1100, k3:3.8},
-    {id:325, name:"Erling Haaland", school:"Man City", level:"Top 5 Europe", p1:22.5, p2:92, p3:75, p4:6.5, p5:0.5, k1:22.1, k2:1450, k3:3.6}
+    {id:325, name:"Erling Haaland", school:"Man City", level:"Top 5 Europe", p1:22.5, p2:92, p3:75, p4:6.5, p5:0.5, k1:22.1, k2:1450, k3:3.6},
+    {id:326, name:"Vinicius Junior", school:"Real Madrid", level:"Top 5 Europe", p1:23.8, p2:93, p3:82, p4:13.5, p5:0.8, k1:23.5, k2:1100, k3:4.5},
+    {id:327, name:"Rodri", school:"Man City", level:"Top 5 Europe", p1:20.0, p2:97, p3:95, p4:8.0, p5:3.5, k1:19.5, k2:1300, k3:3.2},
+    {id:328, name:"Phil Foden", school:"Man City", level:"Top 5 Europe", p1:21.5, p2:91, p3:86, p4:10.0, p5:1.2, k1:21.0, k2:1050, k3:4.0},
+    {id:329, name:"Harry Kane", school:"Bayern Munich", level:"Top 5 Europe", p1:20.2, p2:95, p3:85, p4:7.0, p5:0.5, k1:19.8, k2:1400, k3:3.4},
+    {id:330, name:"Mohamed Salah", school:"Liverpool", level:"Top 5 Europe", p1:22.8, p2:92, p3:83, p4:11.5, p5:1.0, k1:22.5, k2:1180, k3:4.2}
 ];
 
-// ==========================================
-// 🎾 TENNIS (ten)
-// ==========================================
+// Tennis (ten)
 masterDB['ten']['pro'] = [ 
     {id:501, name:"Joao Fonseca", school:"ITF", level:"ITF Juniors", p1:66, p2:22, p3:25, p4:65, p5:38, k1:9.0, k2:110, k3:95},
     {id:502, name:"Alina Korneeva", school:"ITF", level:"ITF Juniors", p1:62, p2:25, p3:20, p4:60, p5:40, k1:8.5, k2:90, k3:85},
@@ -480,12 +529,15 @@ masterDB['ten']['proleague'] = [
     {id:522, name:"Carlos Alcaraz", school:"ATP", level:"ATP", p1:68, p2:16, p3:38, p4:72, p5:44, k1:9.5, k2:145, k3:110},
     {id:523, name:"Novak Djokovic", school:"ATP", level:"ATP", p1:72, p2:12, p3:32, p4:78, p5:45, k1:9.8, k2:130, k3:108}, 
     {id:524, name:"Aryna Sabalenka", school:"WTA", level:"WTA", p1:68, p2:15, p3:30, p4:70, p5:40, k1:9.4, k2:140, k3:105},
-    {id:525, name:"Iga Swiatek", school:"WTA", level:"WTA", p1:71, p2:12, p3:28, p4:74, p5:46, k1:9.0, k2:125, k3:100}
+    {id:525, name:"Iga Swiatek", school:"WTA", level:"WTA", p1:71, p2:12, p3:28, p4:74, p5:46, k1:9.0, k2:125, k3:100},
+    {id:526, name:"Daniil Medvedev", school:"ATP", level:"ATP", p1:67, p2:18, p3:25, p4:70, p5:48, k1:9.9, k2:120, k3:100},
+    {id:527, name:"Alexander Zverev", school:"ATP", level:"ATP", p1:74, p2:16, p3:28, p4:68, p5:38, k1:10.2, k2:125, k3:102},
+    {id:528, name:"Coco Gauff", school:"WTA", level:"WTA", p1:62, p2:18, p3:24, p4:65, p5:45, k1:8.8, k2:115, k3:95},
+    {id:529, name:"Elena Rybakina", school:"WTA", level:"WTA", p1:72, p2:16, p3:32, p4:68, p5:36, k1:9.6, k2:130, k3:100},
+    {id:530, name:"Ben Shelton", school:"ATP", level:"ATP", p1:65, p2:22, p3:34, p4:60, p5:35, k1:9.2, k2:148, k3:115}
 ];
 
-// ==========================================
-// 🏓 PICKLEBALL (pkl)
-// ==========================================
+// Pickleball (pkl)
 masterDB['pkl']['pro'] = [ 
     {id:601, name:"Jack Sock", school:"PPA Qual", level:"Pro Qualifiers", p1:6.2, p2:75, p3:80, p4:65, p5:6.0, k1:180, k2:52, k3:75},
     {id:602, name:"Hurricane Tyra Black", school:"APP", level:"Pro Qualifiers", p1:5.9, p2:78, p3:82, p4:55, p5:5.5, k1:220, k2:45, k3:72}
@@ -504,11 +556,18 @@ masterDB['pkl']['proleague'] = [
     {id:622, name:"Anna Leigh Waters", school:"PPA", level:"PPA Tour", p1:6.90, p2:89, p3:92, p4:68, p5:2.5, k1:165, k2:58, k3:72},
     {id:623, name:"Federico Staksrud", school:"PPA", level:"PPA Tour", p1:6.98, p2:87, p3:94, p4:62, p5:2.2, k1:168, k2:54, k3:75},
     {id:624, name:"Catherine Parenteau", school:"PPA", level:"PPA Tour", p1:6.80, p2:86, p3:90, p4:60, p5:3.0, k1:175, k2:51, k3:70},
-    {id:625, name:"Tyson McGuffin", school:"PPA", level:"PPA Tour", p1:6.92, p2:84, p3:88, p4:64, p5:3.5, k1:170, k2:53, k3:74}
+    {id:625, name:"Tyson McGuffin", school:"PPA", level:"PPA Tour", p1:6.92, p2:84, p3:88, p4:64, p5:3.5, k1:170, k2:53, k3:74},
+    {id:626, name:"James Ignatowich", school:"PPA", level:"PPA Tour", p1:6.85, p2:82, p3:85, p4:68, p5:3.8, k1:165, k2:56, k3:77},
+    {id:627, name:"Riley Newman", school:"PPA", level:"PPA Tour", p1:6.88, p2:85, p3:91, p4:60, p5:2.8, k1:160, k2:52, k3:75},
+    {id:628, name:"Anna Bright", school:"PPA", level:"PPA Tour", p1:6.78, p2:87, p3:89, p4:62, p5:3.1, k1:170, k2:50, k3:71},
+    {id:629, name:"Collin Johns", school:"PPA", level:"PPA Tour", p1:6.89, p2:88, p3:93, p4:55, p5:2.4, k1:168, k2:51, k3:76},
+    {id:630, name:"Jade Kawamoto", school:"PPA", level:"PPA Tour", p1:6.70, p2:85, p3:88, p4:58, p5:2.9, k1:172, k2:48, k3:69}
 ];
 
 let activeSport = 'bkb';
 let scoutState = { events: [], countsHome: {}, countsAway: {}, impactHome: 50, impactAway: 50 };
+let pbpInterval = null;
+let lastPlayId = null;
 
 // ==========================================
 // CLIENT-SIDE RANDOM FOREST SIMULATOR
@@ -519,66 +578,47 @@ class OmniForest {
         this.forest = [];
         this.initForest();
     }
-
     initForest() {
         for(let i=0; i < this.n_estimators; i++) {
             let featureSubset = [0,1,2,3,4].sort(() => 0.5 - Math.random()).slice(0, 3); 
             let treeNodes = featureSubset.map(featIndex => {
                 return {
-                    feature: featIndex,
-                    threshold: Math.random() * 50 + 40,
-                    passMultiplier: 1.0 + (Math.random() * 0.3),
-                    failMultiplier: 0.7 + (Math.random() * 0.3)
+                    feature: featIndex, threshold: Math.random() * 50 + 40,
+                    passMultiplier: 1.0 + (Math.random() * 0.3), failMultiplier: 0.7 + (Math.random() * 0.3)
                 };
             });
             this.forest.push({ nodes: treeNodes, baseWeight: Math.random() * 0.5 + 0.7 });
         }
     }
-
     predict(s1, s2, s3, s4, s5) {
-        let stats = [s1, s2, s3, s4, s5];
-        let forestPredictions = [];
-
+        let stats = [s1, s2, s3, s4, s5]; let forestPredictions = [];
         this.forest.forEach(tree => {
             let treeScore = 0;
             tree.nodes.forEach(node => {
                 let statValue = stats[node.feature];
-                if (statValue >= node.threshold) {
-                    treeScore += (statValue * node.passMultiplier);
-                } else {
-                    treeScore += (statValue * node.failMultiplier);
-                }
+                if (statValue >= node.threshold) treeScore += (statValue * node.passMultiplier);
+                else treeScore += (statValue * node.failMultiplier);
             });
             forestPredictions.push((treeScore / tree.nodes.length) * tree.baseWeight);
         });
-
-        let finalScore = forestPredictions.reduce((a, b) => a + b, 0) / this.n_estimators;
-        return Math.max(0, Math.min(100, Math.round(finalScore)));
+        return Math.max(0, Math.min(100, Math.round(forestPredictions.reduce((a, b) => a + b, 0) / this.n_estimators)));
     }
 }
 const globalRF = new OmniForest(50);
-
 
 function initApp() {
     let navHtml = Object.keys(SPORT_CONFIG).map(s => 
         `<li class="nav-item"><button class="nav-link px-3 py-2 ${s===activeSport?'active':''}" style="${s===activeSport?'background-color:'+SPORT_CONFIG[s].color+'; color:white;':''}" onclick="switchSport('${s}')">${SPORT_CONFIG[s].icon} ${SPORT_CONFIG[s].name}</button></li>`
     ).join('');
-    
     document.getElementById('main-nav-tabs').innerHTML = navHtml;
-
+    
     Object.keys(SPORT_CONFIG).forEach(s => {
         ['pro', 'd1', 'minor', 'proleague'].forEach(m => {
             let savedDB = JSON.parse(localStorage.getItem(`omni_${s}_${m}_db`));
             if(savedDB && savedDB.length >= masterDB[s][m].length) masterDB[s][m] = savedDB;
             masterDB[s][m].forEach(p => {
                 let conf = SPORT_CONFIG[s]; let t = conf.tiers[m];
-                if(p.p3 === undefined) p.p3 = t.t_p3 || (conf.m3.min+conf.m3.max)/2;
-                if(p.p4 === undefined) p.p4 = t.t_p4 || (conf.m4.min+conf.m4.max)/2;
-                if(p.p5 === undefined) p.p5 = t.t_p5 || (conf.m5.min+conf.m5.max)/2;
-                if(p.k1 === undefined) p.k1 = (conf.kine.k1.min+conf.kine.k1.max)/2;
-                if(p.k2 === undefined) p.k2 = (conf.kine.k2.min+conf.kine.k2.max)/2;
-                if(p.k3 === undefined) p.k3 = (conf.kine.k3.min+conf.kine.k3.max)/2;
-                p.score = calcScore(s, m, p.p1, p.p2, p.p3, p.p4, p.p5);
+                p.score = calcScore(s, m, p.p1, p.p2, p.p3 || t.t_p3, p.p4 || t.t_p4, p.p5 || t.t_p5);
             });
         });
     });
@@ -591,27 +631,18 @@ function initApp() {
 function switchSport(s) { 
     activeSport = s; 
     scoutState = { events: [], countsHome: {}, countsAway: {}, impactHome: 50, impactAway: 50 };
+    if(pbpInterval) { clearInterval(pbpInterval); pbpInterval = null; }
     initApp(); 
 }
 
 function calcNorm(val, mDef, target) {
-    if (mDef.inv) {
-        return Math.max(0, Math.min(100, 100 - ((val - target) / Math.abs(mDef.max - mDef.min) * 200)));
-    } else {
-        return Math.max(0, Math.min(100, (val / target) * 100));
-    }
+    if (mDef.inv) return Math.max(0, Math.min(100, 100 - ((val - target) / Math.abs(mDef.max - mDef.min) * 200)));
+    else return Math.max(0, Math.min(100, (val / target) * 100));
 }
 
 function calcScore(s, m, p1, p2, p3, p4, p5) {
     let conf = SPORT_CONFIG[s]; let t = conf.tiers[m];
-    let s1 = calcNorm(p1, conf.m1, t.t_p1);
-    let s2 = calcNorm(p2, conf.m2, t.t_p2);
-    let s3 = calcNorm(p3, conf.m3, t.t_p3);
-    let s4 = calcNorm(p4, conf.m4, t.t_p4);
-    let s5 = calcNorm(p5, conf.m5, t.t_p5);
-    
-    // Replaced legacy linear math with Random Forest
-    return globalRF.predict(s1, s2, s3, s4, s5);
+    return globalRF.predict(calcNorm(p1, conf.m1, t.t_p1), calcNorm(p2, conf.m2, t.t_p2), calcNorm(p3, conf.m3, t.t_p3), calcNorm(p4, conf.m4, t.t_p4), calcNorm(p5, conf.m5, t.t_p5));
 }
 
 function renderSportContent() {
@@ -637,7 +668,11 @@ function renderSportContent() {
     setTimeout(() => {
         ['pro', 'd1', 'minor', 'proleague'].forEach(m => { updateProfile(m); renderDB(m); renderBoard(m); });
         updateScoutHistoryDropdown(); 
-        updateLiveDashboard();
+        updateLiveDashboard(true);
+        // Bind to all newly created tabs
+        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', () => setTimeout(fixPlotlyLayouts, 50));
+        });
         fixPlotlyLayouts();
     }, 50);
 }
@@ -683,8 +718,8 @@ function generateModeHTML(mode) {
                     </div>
                     <div class="col-md-9">
                         <div class="row g-2">
-                            <div class="col-md-5"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">Overall Grade</div><div class="card-body p-0 chart-mobile-fix" id="${px}_gauge" style="height:320px;"></div></div></div>
-                            <div class="col-md-7"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">5-Tool Radar</div><div class="card-body p-0 chart-mobile-fix" id="${px}_radar" style="height:320px;"></div></div></div>
+                            <div class="col-md-5"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">Overall Grade</div><div class="card-body p-0 chart-mobile-fix w-100" id="${px}_gauge" style="height:320px;"></div></div></div>
+                            <div class="col-md-7"><div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold" style="color:${c.color}">5-Tool Radar</div><div class="card-body p-0 chart-mobile-fix w-100" id="${px}_radar" style="height:320px;"></div></div></div>
                         </div>
                     </div>
                 </div>
@@ -698,7 +733,7 @@ function generateModeHTML(mode) {
                         </div></div>
                     </div>
                     <div class="col-md-8">
-                        <div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold text-info">Kinematic Translation Profile</div><div class="card-body p-0 chart-mobile-fix" id="${px}_kine_chart" style="height:300px;"></div></div>
+                        <div class="card border-secondary h-100"><div class="card-header bg-dark text-center fw-bold text-info">Kinematic Translation Profile</div><div class="card-body p-0 chart-mobile-fix w-100" id="${px}_kine_chart" style="height:300px;"></div></div>
                     </div>
                 </div>
             </div>
@@ -732,10 +767,15 @@ function generateLiveHTML() {
             <select id="live_api_tier" class="form-select bg-dark text-white border-secondary" style="max-width: 200px;">${c.apiOpts}</select>
             <input type="text" id="live_espn_id" class="form-control bg-dark text-white border-secondary" placeholder="Game ID">
             <button class="btn btn-info fw-bold w-100 w-md-auto text-dark" id="live_btn_sync" onclick="syncLiveRosters()">Pull</button>
+            <button class="btn btn-outline-info fw-bold w-100 w-md-auto" onclick="manualRefreshPBP(this)">🔄 Refresh</button>
+            <div class="form-check form-switch ms-md-2 mt-2 mt-md-0 d-flex align-items-center gap-2">
+                <input class="form-check-input mt-0" type="checkbox" id="auto_sync_toggle" onchange="toggleAutoSync()">
+                <label class="form-check-label text-white fw-bold small text-nowrap mt-1">Live Sync</label>
+            </div>
             
-            <span class="input-group-text bg-dark text-success border-success w-100 w-md-auto fw-bold ms-md-3">☁️ Webhook</span>
-            <input type="text" id="live_webhook" class="form-control bg-dark text-white border-success" placeholder="Google Sheets URL">
-            <button class="btn btn-success fw-bold w-100 w-md-auto text-white" onclick="streamToCloud(event)">Stream</button>
+            <span class="input-group-text bg-dark text-success border-success w-100 w-md-auto fw-bold ms-md-3 d-none d-lg-block">☁️ Webhook</span>
+            <input type="text" id="live_webhook" class="form-control bg-dark text-white border-success d-none d-lg-block" placeholder="Google Sheets URL">
+            <button class="btn btn-success fw-bold w-100 w-md-auto text-white d-none d-lg-block" onclick="streamToCloud(event)">Stream</button>
         </div></div>
 
         <div class="row g-3 mb-3">
@@ -748,7 +788,7 @@ function generateLiveHTML() {
                         <button class="btn btn-secondary fw-bold" onclick="addCustomPlayer('home')">➕</button>
                     </div>
                     <div class="row g-0">${btnHtml('home')}</div>
-                    <div id="live_gauge_home" class="chart-mobile-fix mt-2" style="height:150px;"></div>
+                    <div id="live_gauge_home" class="chart-mobile-fix mt-2 w-100" style="height:150px;"></div>
                 </div>
             </div></div>
             
@@ -764,7 +804,23 @@ function generateLiveHTML() {
                         <input type="number" id="live_score_b" class="score-input" value="0">
                     </div>
                 </div>
-                <div class="border-top border-secondary pt-2"><div id="live_momentum_chart" class="chart-mobile-fix" style="height:220px;"></div></div>
+                
+                <div class="progress mt-3" style="height: 15px; border-radius: 8px; background-color: #333;">
+                    <div id="live_tug_home" class="progress-bar fw-bold" style="width: 50%; background-color: ${c.color}; transition: width 0.5s;"></div>
+                    <div id="live_tug_away" class="progress-bar fw-bold" style="width: 50%; background-color: #888; transition: width 0.5s;"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1 small fw-bold text-muted mb-2">
+                    <span id="live_tug_home_txt" style="color:${c.color}">50%</span>
+                    <span>DOMINANCE</span>
+                    <span id="live_tug_away_txt" style="color:#888">50%</span>
+                </div>
+                
+                <div class="row text-center mt-3 border-top border-secondary pt-2">
+                    <div class="col-4"><h6 class="text-muted m-0 small">HOME EFF</h6><h5 id="live_eff_home" class="text-white m-0">0%</h5></div>
+                    <div class="col-4"><h6 class="text-muted m-0 small">EVENTS</h6><h5 id="live_total_events" class="text-white m-0">0</h5></div>
+                    <div class="col-4"><h6 class="text-muted m-0 small">AWAY EFF</h6><h5 id="live_eff_away" class="text-white m-0">0%</h5></div>
+                </div>
+
             </div></div></div>
 
             <div class="col-lg-3 col-md-4"><div class="card h-100" style="border-top: 4px solid #888">
@@ -776,24 +832,35 @@ function generateLiveHTML() {
                         <button class="btn btn-secondary fw-bold" onclick="addCustomPlayer('away')">➕</button>
                     </div>
                     <div class="row g-0">${btnHtml('away')}</div>
-                    <div id="live_gauge_away" class="chart-mobile-fix mt-2" style="height:150px;"></div>
+                    <div id="live_gauge_away" class="chart-mobile-fix mt-2 w-100" style="height:150px;"></div>
                 </div>
             </div></div>
         </div>
 
         <div class="row g-3 mb-3">
-            <div class="col-md-6"><div class="card border-secondary h-100"><div class="card-header bg-dark text-muted fw-bold py-1">Action Distribution</div><div class="card-body p-0 chart-mobile-fix" id="live_bar_chart" style="height:280px;"></div></div></div>
-            <div class="col-md-6"><div class="card border-secondary h-100"><div class="card-header bg-dark text-muted fw-bold py-1">Live Readiness Profile</div><div class="card-body p-0 chart-mobile-fix" id="live_radar_chart" style="height:280px;"></div></div></div>
+            <div class="col-lg-4 col-md-6"><div class="card border-secondary h-100"><div class="card-header bg-dark text-muted fw-bold py-1">Action Distribution</div><div class="card-body p-0 chart-mobile-fix w-100" id="live_bar_chart" style="height:280px;"></div></div></div>
+            <div class="col-lg-4 col-md-6"><div class="card border-secondary h-100"><div class="card-header bg-dark text-muted fw-bold py-1">Live Readiness Profile</div><div class="card-body p-0 chart-mobile-fix w-100" id="live_radar_chart" style="height:280px;"></div></div></div>
+            <div class="col-lg-4 col-md-12"><div class="card border-secondary h-100">
+                <div class="card-header bg-dark text-muted fw-bold py-1 d-flex justify-content-between align-items-center">
+                    <span>Play-by-Play Log</span>
+                    <div>
+                        <button class="btn btn-sm btn-outline-warning py-0 px-2 me-1" style="font-size: 0.7rem;" onclick="pastePBPData()">Paste Data</button>
+                        <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 0.7rem;" onclick="exportGameLog()">TXT</button>
+                    </div>
+                </div>
+                <div class="card-body p-2" style="height:280px; overflow-y:auto; scrollbar-width: thin;" id="live_game_log"></div>
+            </div></div>
         </div>
         
         <div class="card border-secondary m-0"><div class="card-body py-2 px-3 d-flex flex-column flex-md-row gap-2 align-items-center">
             <span class="fw-bold text-light text-nowrap">📂 Scout History</span>
             <select id="live_history_select" class="form-select form-select-sm bg-dark text-white border-secondary"></select>
-            <div class="d-flex gap-2 w-100">
-                <button class="btn btn-sm btn-outline-light fw-bold w-100" onclick="loadPastScout()">Load</button>
-                <button class="btn btn-sm btn-success fw-bold w-100" onclick="saveActiveScout()">💾 Save</button>
-                <button class="btn btn-sm btn-info fw-bold w-100" onclick="downloadScoutHistory()">📥 Export</button>
-                <button class="btn btn-sm btn-danger fw-bold w-100" onclick="resetLiveScout()">⚠️ Reset</button>
+            <div class="d-flex gap-2 w-100 mt-2 mt-md-0 flex-wrap">
+                <button class="btn btn-sm btn-outline-light fw-bold flex-grow-1" onclick="loadPastScout()">Load</button>
+                <button class="btn btn-sm btn-success fw-bold flex-grow-1" onclick="saveActiveScout()">💾 Save</button>
+                <button class="btn btn-sm btn-info fw-bold flex-grow-1" onclick="downloadScoutHistory()">📥 Export</button>
+                <button class="btn btn-sm btn-outline-danger fw-bold flex-grow-1" onclick="deletePastScout()">🗑️ Delete</button>
+                <button class="btn btn-sm btn-danger fw-bold flex-grow-1" onclick="resetLiveScout()">⚠️ Reset</button>
             </div>
         </div></div>
     `;
@@ -807,25 +874,30 @@ function updateProfile(m) {
     let p3 = parseFloat(document.getElementById(`${px}_p3`).value); document.getElementById(`${px}_p3_val`).innerText = p3 + c.m3.unit;
     let p4 = parseFloat(document.getElementById(`${px}_p4`).value); document.getElementById(`${px}_p4_val`).innerText = p4 + c.m4.unit;
     let p5 = parseFloat(document.getElementById(`${px}_p5`).value); document.getElementById(`${px}_p5_val`).innerText = p5 + c.m5.unit;
-    
-    let k1 = parseFloat(document.getElementById(`${px}_k1`).value); document.getElementById(`${px}_k1_val`).innerText = k1 + c.kine.k1.unit;
-    let k2 = parseFloat(document.getElementById(`${px}_k2`).value); document.getElementById(`${px}_k2_val`).innerText = k2 + c.kine.k2.unit;
-    let k3 = parseFloat(document.getElementById(`${px}_k3`).value); document.getElementById(`${px}_k3_val`).innerText = k3 + c.kine.k3.unit;
 
     let score = calcScore(activeSport, m, p1, p2, p3, p4, p5);
     Plotly.newPlot(`${px}_gauge`, [{ domain: {x:[0,1], y:[0,1]}, value: score, title: {text: "Grade", font:{color:'white'}}, type: "indicator", mode: "gauge+number", gauge: {axis: {range: [null, 100]}, bar: {color: c.color}} }], { autosize: true, paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:30, b:10, l:30, r:30} }, {displayModeBar: false, responsive: true});
     
     let r1 = calcNorm(p1, c.m1, t.t_p1), r2 = calcNorm(p2, c.m2, t.t_p2), r3 = calcNorm(p3, c.m3, t.t_p3), r4 = calcNorm(p4, c.m4, t.t_p4), r5 = calcNorm(p5, c.m5, t.t_p5);
-    Plotly.newPlot(`${px}_radar`, [{ type: 'scatterpolar', r: [r1, r2, r3, r4, r5, r1], theta: [c.m1.label, c.m2.label, c.m3.label, c.m4.label, c.m5.label, c.m1.label], fill: 'toself', line: {color: c.color} }], {autosize: true, polar: {radialaxis: {visible: true, range: [0, 100]}}, paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:20, b:20, l:20, r:20}}, {displayModeBar: false, responsive: true}); 
+    Plotly.newPlot(`${px}_radar`, [{ type: 'scatterpolar', r: [r1, r2, r3, r4, r5, r1], theta: [c.m1.label, c.m2.label, c.m3.label, c.m4.label, c.m5.label, c.m1.label], fill: 'toself', line: {color: c.color} }], {autosize: true, polar: {radialaxis: {visible: true, range: [0, 100]}}, paper_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:30, b:30, l:40, r:40}}, {displayModeBar: false, responsive: true}); 
 
-    let kr1 = calcNorm(k1, c.kine.k1, c.kine.k1.max), kr2 = calcNorm(k2, c.kine.k2, c.kine.k2.max), kr3 = calcNorm(k3, c.kine.k3, c.kine.k3.max);
+    let k1 = parseFloat(document.getElementById(`${px}_k1`).value);
+    let k2 = parseFloat(document.getElementById(`${px}_k2`).value);
+    let k3 = parseFloat(document.getElementById(`${px}_k3`).value);
+    
+    let kPct = (val, def) => {
+        let pct = ((val - def.min) / (def.max - def.min)) * 100;
+        let finalPct = def.inv ? 100 - pct : pct;
+        return Math.max(0, Math.min(100, finalPct));
+    };
+
+    let kr1 = kPct(k1, c.kine.k1), kr2 = kPct(k2, c.kine.k2), kr3 = kPct(k3, c.kine.k3);
     Plotly.newPlot(`${px}_kine_chart`, [{ type: 'bar', x: [c.kine.k1.label, c.kine.k2.label, c.kine.k3.label], y: [kr1, kr2, kr3], marker: {color: '#0dcaf0'} }], {autosize: true, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent', font: {color: 'white'}, margin: {t:20, b:40, l:40, r:20}, yaxis:{range:[0,100]}}, {displayModeBar: false, responsive: true});
 }
 
 function renderDB(m) {
     let px = `${activeSport}_${m}`; let c = SPORT_CONFIG[activeSport];
     let q = document.getElementById(`${px}_search`) ? document.getElementById(`${px}_search`).value.toLowerCase() : '';
-    
     let view = masterDB[activeSport][m].filter(p => `${p.name} ${p.school} ${p.level}`.toLowerCase().includes(q));
     document.getElementById(`${px}_db_body`).innerHTML = view.sort((a,b)=>b.score-a.score).map(p => `
         <tr><td class="text-start ps-2 text-light fw-bold">${p.name}<br><small class="text-muted">${p.school}</small></td>
@@ -843,7 +915,7 @@ function loadToProfile(m, id) {
     if(p.k1 !== undefined) document.getElementById(`${px}_k1`).value = p.k1;
     if(p.k2 !== undefined) document.getElementById(`${px}_k2`).value = p.k2;
     if(p.k3 !== undefined) document.getElementById(`${px}_k3`).value = p.k3;
-
+    
     updateProfile(m); new bootstrap.Tab(document.querySelector(`button[data-bs-target="#${px}_prof"]`)).show();
 }
 
@@ -885,6 +957,7 @@ window.addCustomPlayer = function(side) {
     updateLiveDashboard();
 }
 
+// === API SYNC & PARSER ===
 window.syncLiveRosters = async function() {
     let id = document.getElementById(`live_espn_id`).value; if(!id) return alert("Enter an ESPN Game ID.");
     let apiEndpoint = document.getElementById(`live_api_tier`).value; let pref = SPORT_CONFIG[activeSport].espnPrefix;
@@ -898,8 +971,17 @@ window.syncLiveRosters = async function() {
 
         if (data.header && data.header.competitions) {
             let comps = data.header.competitions[0].competitors;
-            document.getElementById(`live_team_a_name`).value = (comps.find(c => c.homeAway === 'home')||{}).team.abbreviation || "HOME";
-            document.getElementById(`live_team_b_name`).value = (comps.find(c => c.homeAway === 'away')||{}).team.abbreviation || "AWAY";
+            let hComp = comps.find(c => c.homeAway === 'home');
+            let aComp = comps.find(c => c.homeAway === 'away');
+            
+            if(hComp) {
+                document.getElementById(`live_team_a_name`).value = hComp.team.abbreviation || "HOME";
+                if(hComp.score) document.getElementById('live_score_a').value = hComp.score;
+            }
+            if(aComp) {
+                document.getElementById(`live_team_b_name`).value = aComp.team.abbreviation || "AWAY";
+                if(aComp.score) document.getElementById('live_score_b').value = aComp.score;
+            }
         }
 
         let hP = [], aP = [];
@@ -921,35 +1003,178 @@ window.syncLiveRosters = async function() {
     } catch(e) { alert(`Failed to fetch ${pref}/${apiEndpoint}. ID may be invalid.`); btn.innerText = oldTxt; }
 };
 
-window.logScoutingEvent = function(action, pts, type, side) {
+window.manualRefreshPBP = async function(btn) {
+    if(!document.getElementById('live_espn_id').value) return alert("Please enter an ESPN Game ID first.");
+    let oldTxt = btn.innerHTML;
+    btn.innerHTML = "⏳...";
+    await fetchPlayByPlay();
+    btn.innerHTML = oldTxt;
+};
+
+window.toggleAutoSync = function() {
+    let toggle = document.getElementById('auto_sync_toggle');
+    if (toggle && toggle.checked) {
+        if(!document.getElementById('live_espn_id').value) {
+            alert("Please enter an ESPN Game ID first.");
+            toggle.checked = false;
+            return;
+        }
+        fetchPlayByPlay();
+        pbpInterval = setInterval(fetchPlayByPlay, 10000); 
+    } else {
+        if(pbpInterval) { clearInterval(pbpInterval); pbpInterval = null; }
+    }
+};
+
+window.fetchPlayByPlay = async function() {
+    let id = document.getElementById(`live_espn_id`).value; 
+    if(!id) return;
+    let apiEndpoint = document.getElementById(`live_api_tier`).value; 
+    let pref = SPORT_CONFIG[activeSport].espnPrefix;
+
+    try {
+        let r = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${pref}/${apiEndpoint}/summary?event=${id}`);
+        let data = await r.json();
+        
+        // Sync Scores First
+        if (data.header && data.header.competitions) {
+            let comps = data.header.competitions[0].competitors;
+            let hComp = comps.find(c => c.homeAway === 'home');
+            let aComp = comps.find(c => c.homeAway === 'away');
+            if(hComp && hComp.score) document.getElementById('live_score_a').value = hComp.score;
+            if(aComp && aComp.score) document.getElementById('live_score_b').value = aComp.score;
+        }
+        
+        // Parse Plays
+        let plays = [];
+        if (data.plays && data.plays.length > 0) plays = data.plays;
+        else if (data.drives && data.drives.current && data.drives.current.plays) plays = data.drives.current.plays;
+        
+        if (plays.length > 0) {
+            let latestPlay = plays[plays.length - 1];
+            let playId = latestPlay.id || latestPlay.sequenceNumber || latestPlay.text;
+            
+            if (playId !== lastPlayId) {
+                lastPlayId = playId;
+                let text = latestPlay.text || latestPlay.description;
+                let team = latestPlay.team ? latestPlay.team.abbreviation : "SYS";
+                
+                autoParsePlay(text, team);
+                let logEl = document.getElementById('live_game_log');
+                if (logEl) {
+                    let newEntry = document.createElement('div');
+                    newEntry.className = "border-bottom border-secondary pb-1 mb-1 small text-info fw-bold";
+                    newEntry.innerHTML = `<span class="text-muted">[AUTO]</span> <b>${team}</b>: ${text}`;
+                    logEl.prepend(newEntry);
+                }
+            }
+        }
+    } catch(e) { console.log("PBP Fetch Error", e); }
+};
+
+window.pastePBPData = function() {
+    let data = prompt("Paste Play-by-Play CSV/Text data here (one event per line):");
+    if(data) {
+        let lines = data.split('\n').filter(l=>l.trim());
+        lines.forEach(l => {
+            let logEl = document.getElementById('live_game_log');
+            if (logEl) {
+                let newEntry = document.createElement('div');
+                newEntry.className = "border-bottom border-secondary pb-1 mb-1 small text-warning";
+                newEntry.innerHTML = `<span class="text-muted">[PASTED]</span> ${l}`;
+                logEl.prepend(newEntry);
+            }
+            autoParsePlay(l, 'UNK');
+        });
+        alert(`Imported & Parsed ${lines.length} plays.`);
+    }
+};
+
+function autoParsePlay(text, teamIndicator) {
+    let txt = text.toLowerCase();
+    let c = SPORT_CONFIG[activeSport];
+    let tA = (document.getElementById('live_team_a_name').value || '').toLowerCase();
+    let tB = (document.getElementById('live_team_b_name').value || '').toLowerCase();
+    let side = 'home'; 
+    if(teamIndicator && teamIndicator.toLowerCase() === tB) side = 'away';
+    else if(teamIndicator && teamIndicator.toLowerCase() === tA) side = 'home';
+
+    let matchedAct = null;
+    if (activeSport === 'bkb') {
+        if(txt.includes('makes three point') || txt.includes('3-pt')) matchedAct = c.acts.find(a=>a.id==='m3');
+        else if(txt.includes('makes') && !txt.includes('free throw')) matchedAct = c.acts.find(a=>a.id==='m2');
+        else if(txt.includes('misses three point') || txt.includes('missed 3-pt')) matchedAct = c.acts.find(a=>a.id==='x3');
+        else if(txt.includes('misses') || txt.includes('missed')) matchedAct = c.acts.find(a=>a.id==='x2');
+        else if(txt.includes('rebound')) matchedAct = c.acts.find(a=>a.id==='reb');
+        else if(txt.includes('turnover')) matchedAct = c.acts.find(a=>a.id==='to');
+        else if(txt.includes('assist')) matchedAct = c.acts.find(a=>a.id==='ast');
+        else if(txt.includes('block') || txt.includes('steal')) matchedAct = c.acts.find(a=>a.id==='dk');
+    } else if (activeSport === 'bsb') {
+        if(txt.includes('homers') || txt.includes('home run')) matchedAct = c.acts.find(a=>a.id==='hr');
+        else if(txt.includes('singles') || txt.includes('single to')) matchedAct = c.acts.find(a=>a.id==='sin');
+        else if(txt.includes('doubles') || txt.includes('triples')) matchedAct = c.acts.find(a=>a.id==='xbh');
+        else if(txt.includes('strikes out') || txt.includes('struck out')) matchedAct = c.acts.find(a=>a.id==='ko');
+        else if(txt.includes('walks') || txt.includes('walked')) matchedAct = c.acts.find(a=>a.id==='wlk');
+        else if(txt.includes('flies out') || txt.includes('grounds out') || txt.includes('pops out')) matchedAct = c.acts.find(a=>a.id==='out');
+        else if(txt.includes('lines out')) matchedAct = c.acts.find(a=>a.id==='lo');
+        else if(txt.includes('error')) matchedAct = c.acts.find(a=>a.id==='err');
+    } else if (activeSport === 'cfb') {
+        if(txt.includes('touchdown')) matchedAct = c.acts.find(a=>a.id==='td');
+        else if(txt.includes('field goal')) matchedAct = c.acts.find(a=>a.id==='fg');
+        else if(txt.includes('intercepted')) matchedAct = c.acts.find(a=>a.id==='int');
+        else if(txt.includes('sacked')) matchedAct = c.acts.find(a=>a.id==='sck');
+        else if(txt.includes('fumble')) matchedAct = c.acts.find(a=>a.id==='fum');
+        else if(txt.includes('incomplete')) matchedAct = c.acts.find(a=>a.id==='inc');
+        else if(txt.includes('1st down')) matchedAct = c.acts.find(a=>a.id==='1st');
+        else if(txt.includes('tackle')) matchedAct = c.acts.find(a=>a.id==='tkl');
+    } else {
+        if(txt.includes('goal')) matchedAct = c.acts.find(a=>a.id==='gl');
+        else if(txt.includes('assist')) matchedAct = c.acts.find(a=>a.id==='ast');
+        else if(txt.includes('foul')) matchedAct = c.acts.find(a=>a.id==='fl');
+        else if(txt.includes('ace')) matchedAct = c.acts.find(a=>a.id==='ace');
+        else if(txt.includes('winner')) matchedAct = c.acts.find(a=>a.id==='win');
+    }
+
+    if(matchedAct) {
+        logScoutingEvent(matchedAct.n, matchedAct.pts, matchedAct.t, side, true); 
+    }
+}
+
+window.logScoutingEvent = function(action, pts, type, side, skipLogVisual = false) {
     let sl = scoutState; let shift = (type === 'success') ? 4 : (type === 'fail' ? -5 : 0.5);
     let px = `live`;
+    
+    // Track Badge
     let cntEl = document.getElementById(`${px}_cnt_${side}_${action.replace(/\s+/g, '')}`);
     if(cntEl) cntEl.innerText = (parseInt(cntEl.innerText) || 0) + 1;
 
+    // Track Data
     if (side === 'home') {
         sl.countsHome[action] = (sl.countsHome[action] || 0) + 1;
         sl.impactHome = Math.max(0, Math.min(100, sl.impactHome + shift));
-        if(pts > 0) document.getElementById(`live_score_a`).value = parseInt(document.getElementById(`live_score_a`).value) + pts;
+        if(!skipLogVisual && pts > 0) document.getElementById(`live_score_a`).value = parseInt(document.getElementById(`live_score_a`).value) + pts;
         let player = document.getElementById('live_select_home').value;
         let team = document.getElementById('live_team_a_name').value || 'HOME';
         sl.events.push({ action: `${player} (${team}): ${action}`, impactHome: sl.impactHome, impactAway: sl.impactAway });
     } else {
         sl.countsAway[action] = (sl.countsAway[action] || 0) + 1;
         sl.impactAway = Math.max(0, Math.min(100, sl.impactAway + shift));
-        if(pts > 0) document.getElementById(`live_score_b`).value = parseInt(document.getElementById(`live_score_b`).value) + pts;
+        if(!skipLogVisual && pts > 0) document.getElementById(`live_score_b`).value = parseInt(document.getElementById(`live_score_b`).value) + pts;
         let player = document.getElementById('live_select_away').value;
         let team = document.getElementById('live_team_b_name').value || 'AWAY';
         sl.events.push({ action: `${player} (${team}): ${action}`, impactHome: sl.impactHome, impactAway: sl.impactAway });
     }
-    updateLiveDashboard();
+    
+    updateLiveDashboard(skipLogVisual);
 }
 
 window.resetLiveScout = function() {
     if(confirm("Clear live scout data?")) {
         scoutState = { events: [], countsHome: {}, countsAway: {}, impactHome: 50, impactAway: 50 };
         document.getElementById(`live_score_a`).value = 0; document.getElementById(`live_score_b`).value = 0;
-        document.querySelectorAll('.action-badge').forEach(b => b.innerText = '0'); updateLiveDashboard();
+        document.querySelectorAll('.action-badge').forEach(b => b.innerText = '0'); 
+        let logEl = document.getElementById('live_game_log'); if(logEl) logEl.innerHTML = '';
+        updateLiveDashboard(true);
     }
 }
 
@@ -962,21 +1187,57 @@ function updateScoutHistoryDropdown() {
 window.saveActiveScout = function() {
     if(!confirm("Save this scout session?")) return;
     let hist = JSON.parse(localStorage.getItem(`omni_scout_hist_${activeSport}`)) || [];
-    hist.push({ date: new Date().toLocaleTimeString(), homeName: document.getElementById(`live_team_a_name`).value, awayName: document.getElementById(`live_team_b_name`).value, homeScore: document.getElementById(`live_score_a`).value, awayScore: document.getElementById(`live_score_b`).value, state: JSON.parse(JSON.stringify(scoutState)) });
-    localStorage.setItem(`omni_scout_hist_${activeSport}`, JSON.stringify(hist)); updateScoutHistoryDropdown(); alert("✅ Saved!");
+    hist.push({ 
+        date: new Date().toLocaleString(), 
+        homeName: document.getElementById(`live_team_a_name`).value, 
+        awayName: document.getElementById(`live_team_b_name`).value, 
+        homeScore: document.getElementById(`live_score_a`).value, 
+        awayScore: document.getElementById(`live_score_b`).value,
+        espnId: document.getElementById(`live_espn_id`).value,
+        apiTier: document.getElementById(`live_api_tier`).value,
+        state: JSON.parse(JSON.stringify(scoutState)) 
+    });
+    localStorage.setItem(`omni_scout_hist_${activeSport}`, JSON.stringify(hist)); 
+    updateScoutHistoryDropdown(); 
+    alert("✅ Saved!");
 }
 
 window.loadPastScout = function() {
     let hist = JSON.parse(localStorage.getItem(`omni_scout_hist_${activeSport}`)) || [];
     let session = hist[document.getElementById(`live_history_select`).value]; if(!session) return;
     scoutState = session.state;
-    document.getElementById(`live_team_a_name`).value = session.homeName; document.getElementById(`live_team_b_name`).value = session.awayName;
-    document.getElementById(`live_score_a`).value = session.homeScore; document.getElementById(`live_score_b`).value = session.awayScore;
+    document.getElementById(`live_team_a_name`).value = session.homeName || 'HOME'; 
+    document.getElementById(`live_team_b_name`).value = session.awayName || 'AWAY';
+    document.getElementById(`live_score_a`).value = session.homeScore || 0; 
+    document.getElementById(`live_score_b`).value = session.awayScore || 0;
+    
+    if(session.espnId !== undefined) document.getElementById(`live_espn_id`).value = session.espnId;
+    if(session.apiTier !== undefined) document.getElementById(`live_api_tier`).value = session.apiTier;
+    
+    // Completely restore badges from scout state
     SPORT_CONFIG[activeSport].acts.forEach(a => {
         let hB = document.getElementById(`live_cnt_home_${a.n.replace(/\s+/g, '')}`); if(hB) hB.innerText = scoutState.countsHome[a.n] || 0;
         let aB = document.getElementById(`live_cnt_away_${a.n.replace(/\s+/g, '')}`); if(aB) aB.innerText = scoutState.countsAway[a.n] || 0;
     });
-    updateLiveDashboard();
+
+    // Completely rebuild the Play-by-Play visual log
+    let logEl = document.getElementById('live_game_log');
+    if (logEl) {
+        logEl.innerHTML = scoutState.events.map((e, idx) => `<div class="border-bottom border-secondary pb-1 mb-1 small text-light"><span class="text-muted">[#${idx+1}]</span> ${e.action}</div>`).reverse().join('') || '<div class="text-muted small text-center mt-4">No events logged yet.</div>';
+    }
+
+    updateLiveDashboard(true);
+}
+
+window.deletePastScout = function() {
+    let sel = document.getElementById(`live_history_select`);
+    if(!sel.value) return alert("No scout session selected to delete.");
+    if(!confirm("Are you sure you want to permanently delete this saved scout session?")) return;
+    
+    let hist = JSON.parse(localStorage.getItem(`omni_scout_hist_${activeSport}`)) || [];
+    hist.splice(sel.value, 1);
+    localStorage.setItem(`omni_scout_hist_${activeSport}`, JSON.stringify(hist));
+    updateScoutHistoryDropdown();
 }
 
 window.downloadScoutHistory = function() {
@@ -984,7 +1245,16 @@ window.downloadScoutHistory = function() {
     let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(hist)); a.download = `Omni_Scout_${activeSport}.json`; a.click();
 }
 
-function updateLiveDashboard() {
+window.exportGameLog = function() {
+    if(scoutState.events.length === 0) return alert("Log is empty.");
+    let txt = scoutState.events.map((e,i) => `[${i+1}] ${e.action} | Home Impact: ${e.impactHome.toFixed(1)} | Away Impact: ${e.impactAway.toFixed(1)}`).join('\n');
+    let a = document.createElement('a');
+    a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(txt);
+    a.download = `Live_Game_Log_${activeSport}_${new Date().getTime()}.txt`;
+    a.click();
+};
+
+function updateLiveDashboard(skipLogVisual = false) {
     let data = scoutState; let c = SPORT_CONFIG[activeSport]; if (!document.getElementById(`live_gauge_home`)) return;
 
     let tA = document.getElementById('live_team_a_name').value || 'HOME';
@@ -997,30 +1267,85 @@ function updateLiveDashboard() {
     let headerAway = document.getElementById('live_header_away');
     if(headerAway) headerAway.innerText = tB.toUpperCase() + ' IMPACT';
 
-    Plotly.newPlot(`live_gauge_home`, [{ domain: {x:[0,1],y:[0,1]}, value: data.impactHome, title: {text: tA + " Readiness", font:{size:14, color:'#aaa'}}, type: "indicator", mode: "gauge+number", number: {font:{size:30, color:'white'}}, gauge: {axis:{range:[0,100]}, bar:{color:c.color}, steps:[{range:[0,40],color:"#444"}]} }], { paper_bgcolor: 'transparent', margin: {t:35,b:0,l:0,r:0}, autosize: true }, {displayModeBar: false, responsive: true});
-    Plotly.newPlot(`live_gauge_away`, [{ domain: {x:[0,1],y:[0,1]}, value: data.impactAway, title: {text: tB + " Readiness", font:{size:14, color:'#aaa'}}, type: "indicator", mode: "gauge+number", number: {font:{size:30, color:'white'}}, gauge: {axis:{range:[0,100]}, bar:{color:"#888"}, steps:[{range:[0,40],color:"#444"}]} }], { paper_bgcolor: 'transparent', margin: {t:35,b:0,l:0,r:0}, autosize: true }, {displayModeBar: false, responsive: true});
+    // 1. Gauges
+    Plotly.newPlot(`live_gauge_home`, [{ domain: {x:[0,1],y:[0,1]}, value: data.impactHome, title: {text: tA + " Readiness", font:{size:14, color:'#aaa'}}, type: "indicator", mode: "gauge+number", number: {font:{size:30, color:'white'}}, gauge: {axis:{range:[0,100]}, bar:{color:c.color}, steps:[{range:[0,40],color:"#444"}]} }], { paper_bgcolor: 'transparent', margin: {t:25,b:10,l:15,r:15}, autosize: true }, {displayModeBar: false, responsive: true});
+    Plotly.newPlot(`live_gauge_away`, [{ domain: {x:[0,1],y:[0,1]}, value: data.impactAway, title: {text: tB + " Readiness", font:{size:14, color:'#aaa'}}, type: "indicator", mode: "gauge+number", number: {font:{size:30, color:'white'}}, gauge: {axis:{range:[0,100]}, bar:{color:"#888"}, steps:[{range:[0,40],color:"#444"}]} }], { paper_bgcolor: 'transparent', margin: {t:25,b:10,l:15,r:15}, autosize: true }, {displayModeBar: false, responsive: true});
 
+    // 2. Momentum Trend Line
     let trH = { x: data.events.map((e,i)=>i), y: data.events.map(e=>e.impactHome), name: pA + ' (' + tA + ')', mode: 'lines+markers', line: {color: c.color, shape: 'spline'}, text: data.events.map(e=>e.action) };
     let trA = { x: data.events.map((e,i)=>i), y: data.events.map(e=>e.impactAway), name: pB + ' (' + tB + ')', mode: 'lines+markers', line: {color: '#888', shape: 'spline'}, text: data.events.map(e=>e.action) };
     Plotly.newPlot(`live_momentum_chart`, [trH, trA], { paper_bgcolor: 'transparent', plot_bgcolor: '#1e1e1e', font: {color: '#aaa'}, margin: {t:10, b:30, l:30, r:10}, xaxis: {gridcolor: '#333'}, yaxis: {range: [0, 100], gridcolor: '#333'}, showlegend: true, legend: {orientation: "h", y: 1.1} }, {displayModeBar: false, responsive: true});
 
+    // 3. Action Bar Distribution
     let labels = c.acts.map(a => a.n);
     let barH = { x: labels, y: labels.map(a => data.countsHome[a]||0), name: tA, type: 'bar', marker: {color: c.color} };
     let barA = { x: labels, y: labels.map(a => data.countsAway[a]||0), name: tB, type: 'bar', marker: {color: '#888'} };
     Plotly.newPlot(`live_bar_chart`, [barH, barA], { barmode: 'group', paper_bgcolor: 'transparent', plot_bgcolor: '#1e1e1e', font: {color: '#aaa'}, margin: {t:20, b:40, l:30, r:20}, yaxis: {gridcolor: '#333', dtick: 1}, showlegend: true, legend: {orientation: "h", y: 1.1} }, {displayModeBar: false, responsive: true});
 
+    // 4. Live Readiness Profile
     let getProfile = (counts) => {
         let succ = 0, fail = 0; c.acts.forEach(a => { if(a.t==='success') succ += counts[a.n]||0; else fail += counts[a.n]||0; });
         return [ Math.min(100, succ*20), Math.max(0, Math.min(100, 50 + (succ*10) - (fail*10))), Math.min(100, succ*15), Math.min(100, succ*10), Math.max(0, 100 - (fail*20)) ];
     };
     let radarH = { type: 'scatterpolar', r: getProfile(data.countsHome), theta: c.radarLabels, fill: 'toself', name: pA + ' (' + tA + ')', line: {color: c.color} };
     let radarA = { type: 'scatterpolar', r: getProfile(data.countsAway), theta: c.radarLabels, fill: 'toself', name: pB + ' (' + tB + ')', line: {color: '#888'} };
-    Plotly.newPlot(`live_radar_chart`, [radarH, radarA], { polar: { radialaxis: {visible: true, range: [0, 100], gridcolor: '#555'} }, paper_bgcolor: 'transparent', font: {color: '#aaa'}, margin: {t:30, b:30, l:30, r:30}, showlegend: true, legend: {orientation: "h", y: 1.1} }, {displayModeBar: false, responsive: true});
+    Plotly.newPlot(`live_radar_chart`, [radarH, radarA], { 
+        polar: { radialaxis: {visible: true, range: [0, 100], gridcolor: '#555'} }, 
+        paper_bgcolor: 'transparent', font: {color: '#aaa', size: 10}, 
+        margin: {t:40, b:40, l:50, r:50}, showlegend: true, 
+        legend: {orientation: "h", y: -0.20, x: 0.5, xanchor: 'center'} 
+    }, {displayModeBar: false, responsive: true});
+    
+    // 5. Advanced Metrics Dashboard
+    let totalImpact = data.impactHome + data.impactAway;
+    let homePct = totalImpact === 0 ? 50 : Math.round((data.impactHome / totalImpact) * 100);
+    let awayPct = totalImpact === 0 ? 50 : 100 - homePct;
+    let tugH = document.getElementById('live_tug_home'); let tugA = document.getElementById('live_tug_away');
+    if (tugH && tugA) {
+        tugH.style.width = homePct + '%'; tugA.style.width = awayPct + '%';
+        document.getElementById('live_tug_home_txt').innerText = homePct + '%';
+        document.getElementById('live_tug_away_txt').innerText = awayPct + '%';
+    }
+    
+    let calcEff = (counts) => {
+        let s = 0, t = 0;
+        c.acts.forEach(a => { let num = counts[a.n]||0; t+=num; if(a.t==='success') s+=num; });
+        return t===0 ? 0 : Math.round((s/t)*100);
+    };
+    let eH = document.getElementById('live_eff_home'); if(eH) eH.innerText = calcEff(data.countsHome) + '%';
+    let eA = document.getElementById('live_eff_away'); if(eA) eA.innerText = calcEff(data.countsAway) + '%';
+    let eT = document.getElementById('live_total_events'); if(eT) eT.innerText = data.events.length;
+    
+    // 6. Manual Manual Log Entry
+    if(!skipLogVisual && data.events.length > 0) {
+        let logEl = document.getElementById('live_game_log');
+        if (logEl) {
+            let lastE = data.events[data.events.length-1];
+            let newEntry = document.createElement('div');
+            newEntry.className = "border-bottom border-secondary pb-1 mb-1 small text-light";
+            newEntry.innerHTML = `<span class="text-muted">[#${data.events.length}]</span> ${lastE.action}`;
+            logEl.prepend(newEntry);
+        }
+    }
 }
 
-function fixPlotlyLayouts() { document.querySelectorAll('.js-plotly-plot').forEach(p => { if (p.offsetParent !== null) Plotly.relayout(p, {autosize: true}); }); }
-document.addEventListener('shown.bs.tab', () => setTimeout(fixPlotlyLayouts, 50)); 
+// FIX: Force resize Plotly charts strictly when tabs become visible
+function fixPlotlyLayouts() { 
+    document.querySelectorAll('.js-plotly-plot').forEach(p => { 
+        if (p.offsetWidth > 0 && p.offsetHeight > 0) { 
+            Plotly.relayout(p, {autosize: true});
+            Plotly.Plots.resize(p);
+        } 
+    }); 
+}
+
+// Ensure resizing triggers on window resize AND on any tab change
 window.addEventListener('resize', fixPlotlyLayouts);
+document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener('shown.bs.tab', (e) => {
+        setTimeout(fixPlotlyLayouts, 50);
+    });
+});
 
 window.exportTool = function(format) {
     let fullState = { masterDB: masterDB, boards: {} };
